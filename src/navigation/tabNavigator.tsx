@@ -4,6 +4,7 @@ import { Modal, StyleSheet, Text, Pressable, View } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import React from "react";
 import { useState } from "react";
+import LoginScreen from "@/screens/login";
 import Runs from "@/screens/runs";
 import Lifts from "@/screens/lifts";
 import AddActivity from "@/screens/addActivity";
