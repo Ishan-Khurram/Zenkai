@@ -1,31 +1,64 @@
+import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
-import { Modal, StyleSheet, Text, Pressable, View } from "react-native";
-import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import React from "react";
-import { useState } from "react";
-import LoginScreen from "@/screens/login";
+import { createStackNavigator } from "@react-navigation/stack";
+import { onAuthStateChanged } from "firebase/auth";
+import { useNavigation } from "@react-navigation/native";
 import Runs from "@/screens/runs";
 import Lifts from "@/screens/lifts";
 import AddActivity from "@/screens/addActivity";
 import Weight from "@/screens/weight";
 import Settings from "@/screens/settings";
-// run icons
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-// scale icon
-import Ionicons from "@expo/vector-icons/Ionicons";
-// activity circle
-import AntDesign from "@expo/vector-icons/AntDesign";
-// settings
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import LoginScreen from "@/screens/login";
+import { FIREBASE_AUTH } from "firebaseConfig";
+import {
+  MaterialCommunityIcons,
+  Ionicons,
+  AntDesign,
+  FontAwesome6,
+} from "@expo/vector-icons";
+import { Pressable, View, Text, Modal, StyleSheet } from "react-native";
+import SignInScreen from "@/screens/login";
+import AddLift from "@/screens/addLift";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const TabNavigator: React.FC = () => {
+  // start with null so even if the user is authenticated, the login screen doesnt flash on
+  // every app open.
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const navigation = useNavigation();
+
+  // Set up auth listener to check if the user is logged in or not
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setIsAuthenticated(!!user);
+    });
+    return unsubscribe; // Cleanup on unmount
+  }, []);
+
+  // // Display loading or login based on auth status
+  // if (isAuthenticated === null) {
+  //   return <SignInScreen />;
+  // }
+
+  if (!isAuthenticated) {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
+  // When authenticated, render the tab navigator
   return (
-    <NavigationContainer>
+    <>
       <Modal
         animationType="slide"
         transparent={true}
@@ -86,7 +119,6 @@ const TabNavigator: React.FC = () => {
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarIcon: ({ color, size }) => {
-            // Use specific icons from each library based on the route name
             if (route.name === "Runs") {
               return (
                 <MaterialCommunityIcons name="run" size={30} color={color} />
@@ -99,7 +131,7 @@ const TabNavigator: React.FC = () => {
                   color={color}
                 />
               );
-            } else if (route.name === " ") {
+            } else if (route.name === "AddActivity") {
               return <AntDesign name="pluscircle" size={size} color={color} />;
             } else if (route.name === "Weight") {
               return <Ionicons name="scale" size={size} color={color} />;
@@ -116,7 +148,7 @@ const TabNavigator: React.FC = () => {
         <Tab.Screen name="Runs" component={Runs} />
         <Tab.Screen name="Lifts" component={Lifts} />
         <Tab.Screen
-          name=" "
+          name="AddActivity"
           component={AddActivity}
           options={{
             tabBarButton: (props) => (
@@ -127,15 +159,16 @@ const TabNavigator: React.FC = () => {
         <Tab.Screen name="Weight" component={Weight} />
         <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
-    </NavigationContainer>
+    </>
   );
 };
 
-// Styles for modal and buttons
+export default TabNavigator;
+
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    justifyContent: "flex-end", // Aligns modal to slide up from bottom
+    justifyContent: "flex-end",
   },
   modalContent: {
     width: "100%",
@@ -152,28 +185,26 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  button: {
+    backgroundColor: "#42f44b",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+    width: "100%",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 18,
+  },
   mainContainer: {
     paddingTop: 15,
     width: "100%",
     alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10, // Reduced margin for tighter layout
-  },
-  button: {
-    width: "100%",
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 12, // Adds custom spacing between each button
-    borderRadius: 5,
-    backgroundColor: "#42f44b",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
   },
   closeButton: {
     backgroundColor: "#ff5c5c",
@@ -185,5 +216,3 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 });
-
-export default TabNavigator;

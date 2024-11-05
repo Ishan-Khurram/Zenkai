@@ -10,16 +10,14 @@ import {
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 interface SignInScreenProps {
   onSignIn: (email: string, password: string) => void;
   onRegister?: () => void;
 }
 
-export default function SignInScreen({
-  onSignIn,
-  onRegister,
-}: SignInScreenProps) {
+export default function SignInScreen({ onSignIn }: SignInScreenProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -31,13 +29,18 @@ export default function SignInScreen({
   };
 
   // Sign-in function
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     if (email === "" || password === "") {
       setError("Please enter email and password.");
       return;
     }
-    setError("");
-    onSignIn(email, password);
+    try {
+      await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      setError(""); // Clear error if successful
+      console.log("User signed in successfully!"); // Or navigate to the next screen
+    } catch (error: any) {
+      setError(error.message); // Display Firebase error message if sign-in fails
+    }
   };
 
   // Register function
