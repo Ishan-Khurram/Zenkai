@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,26 +7,61 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+import { FIREBASE_DB } from "firebaseConfig"; // Import your Firebase Firestore config
+import { getAuth } from "firebase/auth";
 
-const AddLift = ({ folders, onSaveWorkout }) => {
-  // State to track which folder is selected
-  const [selectedFolder, setSelectedFolder] = useState(null);
+const AddLift = () => {
+  // State to track folders and selected folder
+  const [folders, setFolders] = useState<{ name: string }[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<{ name: string } | null>(
+    null
+  );
   const [exerciseName, setExerciseName] = useState("");
-  const [numSets, setNumSets] = useState(1);
+  const [numSets, setNumSets] = useState(0);
   const [sets, setSets] = useState([]);
   const [exercises, setExercises] = useState([]);
+
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
+
+  // Fetch folders from Firestore on component mount
+  useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const foldersRef = collection(
+          FIREBASE_DB,
+          "users",
+          userId,
+          "liftFolders"
+        );
+        const querySnapshot = await getDocs(foldersRef);
+
+        // Map through each folder document and use folderName
+        const fetchedFolders = querySnapshot.docs.map((doc) => ({
+          name: doc.data().folderName, // Use folderName from Firebase document
+        }));
+
+        setFolders(fetchedFolders); // Update state with the correct folder names
+      } catch (error) {
+        console.error("Error fetching folders:", error);
+      }
+    };
+
+    fetchFolders();
+  }, []);
 
   // Handle folder selection
   const handleSelectFolder = (folder) => {
     setSelectedFolder(folder);
   };
 
-  // Function to render dynamic inputs based on number of sets
+  // Update the number of sets and initialize sets data
   const handleNumSetsChange = (value) => {
     const newNumSets = parseInt(value) || 1;
     setNumSets(newNumSets);
 
-    // Adjust sets array based on number of sets
+    // Initialize sets array based on number of sets
     const updatedSets = Array.from({ length: newNumSets }).map((_, index) => ({
       weight: sets[index]?.weight || "",
       reps: sets[index]?.reps || "",
@@ -89,23 +124,24 @@ const AddLift = ({ folders, onSaveWorkout }) => {
     setSets([]);
   };
 
-  // Render the component UI
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {!selectedFolder ? (
-        // Folder selection view
         <View>
           <Text>Select a Folder:</Text>
-          {folders.map((folder, index) => (
-            <Button
-              key={index}
-              title={folder.name}
-              onPress={() => handleSelectFolder(folder)}
-            />
-          ))}
+          {folders.length > 0 ? (
+            folders.map((folder, index) => (
+              <Button
+                key={index}
+                title={folder.name}
+                onPress={() => handleSelectFolder(folder)}
+              />
+            ))
+          ) : (
+            <Text>No folders available.</Text>
+          )}
         </View>
       ) : (
-        // Exercise input form
         <View>
           <Text style={styles.header}>
             Add Exercise to {selectedFolder.name}

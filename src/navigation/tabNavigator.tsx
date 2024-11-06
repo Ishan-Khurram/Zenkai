@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { onAuthStateChanged } from "firebase/auth";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import Runs from "@/screens/runs";
 import Lifts from "@/screens/lifts";
 import AddActivity from "@/screens/addActivity";
 import Weight from "@/screens/weight";
 import Settings from "@/screens/settings";
-import LoginScreen from "@/screens/login";
+import SignInScreen from "@/screens/login";
 import { FIREBASE_AUTH } from "firebaseConfig";
 import {
   MaterialCommunityIcons,
@@ -17,55 +17,31 @@ import {
   FontAwesome6,
 } from "@expo/vector-icons";
 import { Pressable, View, Text, Modal, StyleSheet } from "react-native";
-import SignInScreen from "@/screens/login";
 import AddLift from "@/screens/addLift";
 
+// Define types for the stack navigator
+type RootStackParamList = {
+  MainTabs: undefined;
+  AddLift: { folders: { name: string }[] }; // Expecting folders with an array of folder names
+};
+
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
-const TabNavigator: React.FC = () => {
-  // start with null so even if the user is authenticated, the login screen doesnt flash on
-  // every app open.
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+const MainTabs = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const navigation = useNavigation();
+  // Example folder data to pass to AddLift
+  const folders = [{ name: "Chest Day" }, { name: "Leg Day" }];
 
-  // Set up auth listener to check if the user is logged in or not
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      setIsAuthenticated(!!user);
-    });
-    return unsubscribe; // Cleanup on unmount
-  }, []);
-
-  // // Display loading or login based on auth status
-  // if (isAuthenticated === null) {
-  //   return <SignInScreen />;
-  // }
-
-  if (!isAuthenticated) {
-    return (
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    );
-  }
-
-  // When authenticated, render the tab navigator
   return (
     <>
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
+        onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -74,7 +50,7 @@ const TabNavigator: React.FC = () => {
               <Pressable
                 style={styles.button}
                 onPress={() => {
-                  setModalVisible(!modalVisible);
+                  setModalVisible(false);
                   console.log("Run selected");
                 }}
               >
@@ -84,8 +60,8 @@ const TabNavigator: React.FC = () => {
               <Pressable
                 style={styles.button}
                 onPress={() => {
-                  setModalVisible(!modalVisible);
-                  console.log("Lift selected");
+                  setModalVisible(false);
+                  navigation.navigate("AddLift"); // Pass folders
                 }}
               >
                 <Text style={styles.buttonText}>Lift</Text>
@@ -94,7 +70,7 @@ const TabNavigator: React.FC = () => {
               <Pressable
                 style={styles.button}
                 onPress={() => {
-                  setModalVisible(!modalVisible);
+                  setModalVisible(false);
                   console.log("Weight selected");
                 }}
               >
@@ -102,10 +78,9 @@ const TabNavigator: React.FC = () => {
               </Pressable>
             </View>
 
-            {/* Close Button */}
             <Pressable
               style={[styles.button, styles.closeButton]}
-              onPress={() => setModalVisible(!modalVisible)}
+              onPress={() => setModalVisible(false)}
             >
               <Text style={[styles.buttonText, styles.closeButtonText]}>
                 Close
@@ -163,6 +138,41 @@ const TabNavigator: React.FC = () => {
   );
 };
 
+// Main stack navigator to handle authentication and main tabs
+const TabNavigator: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setIsAuthenticated(!!user);
+    });
+    return unsubscribe;
+  }, []);
+
+  if (!isAuthenticated) {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Login"
+          component={SignInScreen}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MainTabs"
+        component={MainTabs}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="AddLift" component={AddLift} />
+    </Stack.Navigator>
+  );
+};
+
 export default TabNavigator;
 
 const styles = StyleSheet.create({
@@ -175,9 +185,9 @@ const styles = StyleSheet.create({
     height: "40%",
     padding: 20,
     backgroundColor: "#fff",
-    borderTopLeftRadius: 20, // Rounded corners at the top
+    borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    justifyContent: "space-between", // Space main content and close button
+    justifyContent: "space-between",
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -208,7 +218,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     backgroundColor: "#ff5c5c",
-    width: "100%", // Matches width of other buttons for consistency
+    width: "100%",
     padding: 10,
     alignItems: "center",
   },
