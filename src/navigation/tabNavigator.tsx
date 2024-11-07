@@ -18,6 +18,7 @@ import {
 } from "@expo/vector-icons";
 import { Pressable, View, Text, Modal, StyleSheet } from "react-native";
 import AddLift from "@/screens/addLift";
+import FolderDetail from "@/components/liftFolderData";
 
 // Define types for the stack navigator
 type RootStackParamList = {
@@ -31,9 +32,6 @@ const Stack = createStackNavigator<RootStackParamList>();
 const MainTabs = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
-  // Example folder data to pass to AddLift
-  const folders = [{ name: "Chest Day" }, { name: "Leg Day" }];
 
   return (
     <>
@@ -169,6 +167,11 @@ const TabNavigator: React.FC = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="AddLift" component={AddLift} />
+      <Stack.Screen
+        name="FolderDetail"
+        component={FolderDetail}
+        options={{ title: "Folder Details" }}
+      />
     </Stack.Navigator>
   );
 };

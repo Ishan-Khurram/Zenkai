@@ -6,26 +6,39 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
-import { collection, getDocs } from "firebase/firestore";
-import { FIREBASE_DB } from "firebaseConfig"; // Import your Firebase Firestore config
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
+import { FIREBASE_DB } from "firebaseConfig";
 import { getAuth } from "firebase/auth";
+import { format } from "date-fns";
 
 const AddLift = () => {
-  // State to track folders and selected folder
-  const [folders, setFolders] = useState<{ name: string }[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<{ name: string } | null>(
-    null
+  const [folders, setFolders] = useState<{ name: string; folderID: string }[]>(
+    []
   );
+  const [selectedFolder, setSelectedFolder] = useState<{
+    name: string;
+    folderID: string;
+  } | null>(null);
   const [exerciseName, setExerciseName] = useState("");
-  const [numSets, setNumSets] = useState(0);
-  const [sets, setSets] = useState([]);
-  const [exercises, setExercises] = useState([]);
+  const [numSets, setNumSets] = useState("");
+  const [sets, setSets] = useState<
+    { weight: string; reps: string; notes: string }[]
+  >([]);
+  const [exercises, setExercises] = useState<
+    { name: string; sets: { weight: string; reps: string; notes: string }[] }[]
+  >([]);
 
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
-  // Fetch folders from Firestore on component mount
   useEffect(() => {
     const fetchFolders = async () => {
       try {
@@ -36,41 +49,38 @@ const AddLift = () => {
           "liftFolders"
         );
         const querySnapshot = await getDocs(foldersRef);
-
-        // Map through each folder document and use folderName
         const fetchedFolders = querySnapshot.docs.map((doc) => ({
-          name: doc.data().folderName, // Use folderName from Firebase document
+          name: doc.data().folderName,
+          folderID: doc.id,
         }));
-
-        setFolders(fetchedFolders); // Update state with the correct folder names
+        setFolders(fetchedFolders);
       } catch (error) {
         console.error("Error fetching folders:", error);
       }
     };
 
-    fetchFolders();
-  }, []);
+    if (userId) fetchFolders();
+  }, [userId]);
 
-  // Handle folder selection
   const handleSelectFolder = (folder) => {
     setSelectedFolder(folder);
   };
 
-  // Update the number of sets and initialize sets data
   const handleNumSetsChange = (value) => {
-    const newNumSets = parseInt(value) || 1;
-    setNumSets(newNumSets);
-
-    // Initialize sets array based on number of sets
-    const updatedSets = Array.from({ length: newNumSets }).map((_, index) => ({
-      weight: sets[index]?.weight || "",
-      reps: sets[index]?.reps || "",
-      notes: sets[index]?.notes || "",
-    }));
-    setSets(updatedSets);
+    setNumSets(value);
+    const parsedNumSets = parseInt(value, 10);
+    if (!isNaN(parsedNumSets) && parsedNumSets >= 0) {
+      const updatedSets = Array.from({ length: parsedNumSets }).map(
+        (_, index) => ({
+          weight: sets[index]?.weight || "",
+          reps: sets[index]?.reps || "",
+          notes: sets[index]?.notes || "",
+        })
+      );
+      setSets(updatedSets);
+    }
   };
 
-  // Render dynamic inputs for each set
   const renderSetInputs = () => {
     return sets.map((set, index) => (
       <View key={index} style={styles.setContainer}>
@@ -115,13 +125,71 @@ const AddLift = () => {
     ));
   };
 
-  // Handle adding an exercise to the list
   const handleAddExercise = () => {
+    if (
+      !exerciseName ||
+      sets.length === 0 ||
+      sets.some((set) => !set.weight || !set.reps)
+    ) {
+      Alert.alert(
+        "Incomplete Data",
+        "Please enter an exercise name and complete all set details."
+      );
+      return;
+    }
+
     const newExercise = { name: exerciseName, sets };
     setExercises((prev) => [...prev, newExercise]);
     setExerciseName("");
-    setNumSets(1);
+    setNumSets("");
     setSets([]);
+  };
+
+  const handleSaveWorkout = async () => {
+    if (!userId || !selectedFolder) {
+      Alert.alert(
+        "Save Error",
+        "User not authenticated or no folder selected."
+      );
+      return;
+    }
+
+    if (
+      exerciseName &&
+      sets.length > 0 &&
+      !sets.some((set) => !set.weight || !set.reps)
+    ) {
+      handleAddExercise();
+    }
+
+    const today = format(new Date(), "yyyy-MM-dd");
+    const folderRef = doc(
+      FIREBASE_DB,
+      "users",
+      userId,
+      "liftFolders",
+      selectedFolder.folderID
+    );
+
+    const newExerciseData = {
+      date: today,
+      exercises,
+    };
+
+    try {
+      await updateDoc(folderRef, {
+        exercises: arrayUnion(newExerciseData),
+      });
+      Alert.alert("Workout Saved", "Your workout has been saved!");
+      setExercises([]);
+      setExerciseName("");
+      setNumSets("");
+      setSets([]);
+      setSelectedFolder(null);
+    } catch (error) {
+      console.error("Error saving workout:", error);
+      Alert.alert("Save Error", "Failed to save workout. Please try again.");
+    }
   };
 
   return (
@@ -157,13 +225,14 @@ const AddLift = () => {
             style={styles.input}
             placeholder="Number of Sets"
             keyboardType="numeric"
-            value={numSets.toString()}
+            value={numSets}
             onChangeText={handleNumSetsChange}
           />
 
           {renderSetInputs()}
 
           <Button title="Add Exercise" onPress={handleAddExercise} />
+          <Button title="Save Workout" onPress={handleSaveWorkout} />
         </View>
       )}
     </ScrollView>

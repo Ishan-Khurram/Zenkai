@@ -40,7 +40,7 @@ const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
       const newFolder = {
         folderName: folderName.trim(),
         createdAt: new Date().toISOString(),
-        exercies: [],
+        exercises: [],
       };
       await addDoc(liftFoldersRef, newFolder);
 
