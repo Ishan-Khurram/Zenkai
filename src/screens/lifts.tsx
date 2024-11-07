@@ -22,7 +22,7 @@ export default function Lifts() {
 
   useEffect(() => {
     if (userId) {
-      createFolders();
+      fetchFolders();
     }
   }, [userId]);
 
@@ -30,23 +30,28 @@ export default function Lifts() {
     setFolders((prevFolders) => [...prevFolders, newFolder]);
   };
 
-  const createFolders = async () => {
-    const liftFoldersRef = collection(
-      FIREBASE_DB,
-      "users",
-      userId,
-      "liftFolders"
-    );
-    const docSnap = await getDocs(liftFoldersRef);
-    const folderData = docSnap.docs.map((doc) => ({
-      folderName: doc.data().folderName,
-      exercises: doc.data().exercises || [],
-    }));
-    setFolders(folderData);
+  const fetchFolders = async () => {
+    try {
+      const liftFoldersRef = collection(
+        FIREBASE_DB,
+        "users",
+        userId,
+        "liftFolders"
+      );
+      const docSnap = await getDocs(liftFoldersRef);
+      const folderData = docSnap.docs.map((doc) => ({
+        folderId: doc.id, // Include folderId to use in navigation
+        folderName: doc.data().folderName,
+        exercises: doc.data().exercises || [],
+      }));
+      setFolders(folderData);
+    } catch (error) {
+      console.error("Error fetching folders:", error);
+    }
   };
 
-  const handleFolderPress = (folder) => {
-    navigation.navigate("FolderDetail", { folder });
+  const handleFolderPress = (folderId, folderName) => {
+    navigation.navigate("FolderDetail", { folderId, folderName });
   };
 
   return (
@@ -56,11 +61,13 @@ export default function Lifts() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {folders.map((folder, index) => (
+        {folders.map((folder) => (
           <TouchableHighlight
-            key={index}
+            key={folder.folderId}
             style={styles.button}
-            onPress={() => handleFolderPress(folder)}
+            onPress={() =>
+              handleFolderPress(folder.folderId, folder.folderName)
+            }
             underlayColor="#ddd"
           >
             <Text style={styles.folderText}>{folder.folderName}</Text>
