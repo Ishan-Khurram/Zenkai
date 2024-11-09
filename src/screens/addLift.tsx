@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import {
   collection,
@@ -29,16 +30,13 @@ const AddLift = () => {
   } | null>(null);
   const [exerciseName, setExerciseName] = useState("");
   const [numSets, setNumSets] = useState("");
-  const [sets, setSets] = useState<
-    { weight: string; reps: string; notes: string }[]
-  >([]);
-  const [exercises, setExercises] = useState<
-    { name: string; sets: { weight: string; reps: string; notes: string }[] }[]
-  >([]);
+  const [sets, setSets] = useState([]);
+  const [exercises, setExercises] = useState([]);
 
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
+  // Fetch folders from Firestore on component mount
   useEffect(() => {
     const fetchFolders = async () => {
       try {
@@ -49,6 +47,7 @@ const AddLift = () => {
           "liftFolders"
         );
         const querySnapshot = await getDocs(foldersRef);
+
         const fetchedFolders = querySnapshot.docs.map((doc) => ({
           name: doc.data().folderName,
           folderID: doc.id,
@@ -59,7 +58,7 @@ const AddLift = () => {
       }
     };
 
-    if (userId) fetchFolders();
+    fetchFolders();
   }, [userId]);
 
   const handleSelectFolder = (folder) => {
@@ -69,6 +68,7 @@ const AddLift = () => {
   const handleNumSetsChange = (value) => {
     setNumSets(value);
     const parsedNumSets = parseInt(value, 10);
+
     if (!isNaN(parsedNumSets) && parsedNumSets >= 0) {
       const updatedSets = Array.from({ length: parsedNumSets }).map(
         (_, index) => ({
@@ -139,7 +139,9 @@ const AddLift = () => {
     }
 
     const newExercise = { name: exerciseName, sets };
+    console.log("Adding exercise:", newExercise);
     setExercises((prev) => [...prev, newExercise]);
+
     setExerciseName("");
     setNumSets("");
     setSets([]);
@@ -154,13 +156,23 @@ const AddLift = () => {
       return;
     }
 
+    console.log("Starting save workout process...");
+
+    // Log current input fields before saving
+    console.log("Current exerciseName:", exerciseName);
+    console.log("Current sets:", sets);
+
     if (
       exerciseName &&
       sets.length > 0 &&
       !sets.some((set) => !set.weight || !set.reps)
     ) {
-      handleAddExercise();
+      const currentExercise = { name: exerciseName, sets };
+      console.log("Auto-adding current exercise before save:", currentExercise);
+      setExercises((prev) => [...prev, currentExercise]);
     }
+
+    console.log("Exercises array before saving:", exercises);
 
     const today = format(new Date(), "yyyy-MM-dd");
     const folderRef = doc(
@@ -173,14 +185,18 @@ const AddLift = () => {
 
     const newExerciseData = {
       date: today,
-      exercises,
+      exercises: [...exercises, { name: exerciseName, sets }],
     };
+
+    console.log("Prepared newExerciseData for Firestore:", newExerciseData);
 
     try {
       await updateDoc(folderRef, {
         exercises: arrayUnion(newExerciseData),
       });
       Alert.alert("Workout Saved", "Your workout has been saved!");
+
+      // Clear state after successful save
       setExercises([]);
       setExerciseName("");
       setNumSets("");
@@ -193,49 +209,51 @@ const AddLift = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {!selectedFolder ? (
-        <View>
-          <Text>Select a Folder:</Text>
-          {folders.length > 0 ? (
-            folders.map((folder, index) => (
-              <Button
-                key={index}
-                title={folder.name}
-                onPress={() => handleSelectFolder(folder)}
-              />
-            ))
-          ) : (
-            <Text>No folders available.</Text>
-          )}
-        </View>
-      ) : (
-        <View>
-          <Text style={styles.header}>
-            Add Exercise to {selectedFolder.name}
-          </Text>
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={styles.container}>
+        {!selectedFolder ? (
+          <View>
+            <Text>Select a Folder:</Text>
+            {folders.length > 0 ? (
+              folders.map((folder, index) => (
+                <Button
+                  key={index}
+                  title={folder.name}
+                  onPress={() => handleSelectFolder(folder)}
+                />
+              ))
+            ) : (
+              <Text>No folders available.</Text>
+            )}
+          </View>
+        ) : (
+          <View>
+            <Text style={styles.header}>
+              Add Exercise to {selectedFolder.name}
+            </Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Exercise Name"
-            value={exerciseName}
-            onChangeText={setExerciseName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Number of Sets"
-            keyboardType="numeric"
-            value={numSets}
-            onChangeText={handleNumSetsChange}
-          />
+            <TextInput
+              style={styles.input}
+              placeholder="Exercise Name"
+              value={exerciseName}
+              onChangeText={setExerciseName}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Number of Sets"
+              keyboardType="numeric"
+              value={numSets}
+              onChangeText={handleNumSetsChange}
+            />
 
-          {renderSetInputs()}
+            {renderSetInputs()}
 
-          <Button title="Add Exercise" onPress={handleAddExercise} />
-          <Button title="Save Workout" onPress={handleSaveWorkout} />
-        </View>
-      )}
-    </ScrollView>
+            <Button title="Add Exercise" onPress={handleAddExercise} />
+            <Button title="Save Workout" onPress={handleSaveWorkout} />
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
