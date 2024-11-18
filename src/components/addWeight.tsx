@@ -1,0 +1,113 @@
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  Modal,
+} from "react-native";
+import { collection, addDoc } from "firebase/firestore";
+import { FIREBASE_DB } from "firebaseConfig";
+import { getAuth } from "firebase/auth";
+
+const AddWeight = ({ visible, onClose }) => {
+  // state for weight and date input.
+  const [weight, setWeight] = useState("");
+  const [date, setDate] = useState("");
+
+  // get user id via session
+  const auth = getAuth();
+  const userId = auth.currentUser?.uid;
+
+  // submit handling
+  const handleSubmit = async () => {
+    // validate inputs
+    if (!weight || isNaN(Number(weight)) || !date) {
+      Alert.alert("Invalid Inputs", "Please provide valid weight and date.");
+      return;
+    }
+
+    try {
+      // reference weight folder from within DB
+      const weightRef = collection(
+        FIREBASE_DB,
+        "users",
+        userId,
+        "weightFolder"
+      );
+
+      // add new entry with weight and date
+      await addDoc(weightRef, {
+        weight: Number(weight),
+        date: date,
+      });
+
+      Alert.alert("Weight entry added successfully!");
+
+      // reset input fields and close modal
+      setWeight("");
+      setDate("");
+      onClose(); // Close the modal
+    } catch (error) {
+      console.error("Error adding weight entry", error);
+      Alert.alert("Failed to add weight entry, please try again.");
+    }
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={onClose}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Add Weight Entry</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Weight (lbs)"
+          value={weight}
+          onChangeText={setWeight}
+          keyboardType="numeric" // Only allows numeric input for weight
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Date (MM/DD/YYYY)"
+          value={date}
+          onChangeText={setDate}
+        />
+        <Button title="Submit" onPress={handleSubmit} />
+        <Button title="Cancel" onPress={onClose} color="#ff5c5c" />
+      </View>
+    </Modal>
+  );
+};
+
+export default AddWeight;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    backgroundColor: "rgba(255, 0, 0, 0.5)", // Debug red background
+    zIndex: 1000, // High z-index to ensure visibility
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: "#fff", // White background for inputs
+  },
+});

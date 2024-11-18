@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { onAuthStateChanged } from "firebase/auth";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import {
+  useNavigation,
+  NavigationProp,
+  NavigationContainer,
+} from "@react-navigation/native";
 import Runs from "@/screens/runs";
 import Lifts from "@/screens/lifts";
 import AddActivity from "@/screens/addActivity";
@@ -19,11 +23,12 @@ import {
 import { Pressable, View, Text, Modal, StyleSheet } from "react-native";
 import AddLift from "@/screens/addLift";
 import FolderDetail from "@/components/liftFolderData";
+import AddWeightTest from "@/components/testAddWeight";
 
-// Define types for the stack navigator
 type RootStackParamList = {
   MainTabs: undefined;
-  AddLift: { folders: { name: string }[] }; // Expecting folders with an array of folder names
+  AddLift: { folders: { name: string }[] };
+  AddWeightTest: undefined; // Adding Test Route
 };
 
 const Tab = createBottomTabNavigator();
@@ -35,6 +40,7 @@ const MainTabs = () => {
 
   return (
     <>
+      {/* Main Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -59,7 +65,8 @@ const MainTabs = () => {
                 style={styles.button}
                 onPress={() => {
                   setModalVisible(false);
-                  navigation.navigate("AddLift"); // Pass folders
+                  navigation.navigate("AddLift");
+                  console.log("Lift selected");
                 }}
               >
                 <Text style={styles.buttonText}>Lift</Text>
@@ -68,8 +75,9 @@ const MainTabs = () => {
               <Pressable
                 style={styles.button}
                 onPress={() => {
-                  setModalVisible(false);
-                  console.log("Weight selected");
+                  setModalVisible(false); // Close Main Modal
+                  navigation.navigate("AddWeightTest"); // Navigate to Test
+                  console.log("Navigating to AddWeightTest");
                 }}
               >
                 <Text style={styles.buttonText}>Weight</Text>
@@ -88,6 +96,7 @@ const MainTabs = () => {
         </View>
       </Modal>
 
+      {/* Bottom Tab Navigator */}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
@@ -136,7 +145,6 @@ const MainTabs = () => {
   );
 };
 
-// Main stack navigator to handle authentication and main tabs
 const TabNavigator: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
@@ -171,6 +179,11 @@ const TabNavigator: React.FC = () => {
         name="FolderDetail"
         component={FolderDetail}
         options={{ title: "Folder Details" }}
+      />
+      <Stack.Screen
+        name="AddWeightTest"
+        component={AddWeightTest}
+        options={{ title: "Test AddWeight" }}
       />
     </Stack.Navigator>
   );
