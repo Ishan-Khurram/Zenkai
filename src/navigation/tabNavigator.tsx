@@ -23,7 +23,8 @@ import {
 import { Pressable, View, Text, Modal, StyleSheet } from "react-native";
 import AddLift from "@/screens/addLift";
 import FolderDetail from "@/components/liftFolderData";
-import AddWeightTest from "@/components/testAddWeight";
+import AddWeight from "@/components/addWeight";
+import AddRun from "@/screens/addRun";
 
 type RootStackParamList = {
   MainTabs: undefined;
@@ -36,6 +37,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const MainTabs = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [weightModalVisible, setWeightModalVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
@@ -55,7 +57,7 @@ const MainTabs = () => {
                 style={styles.button}
                 onPress={() => {
                   setModalVisible(false);
-                  console.log("Run selected");
+                  navigation.navigate("AddRun");
                 }}
               >
                 <Text style={styles.buttonText}>Run</Text>
@@ -75,9 +77,13 @@ const MainTabs = () => {
               <Pressable
                 style={styles.button}
                 onPress={() => {
-                  setModalVisible(false); // Close Main Modal
-                  navigation.navigate("AddWeightTest"); // Navigate to Test
-                  console.log("Navigating to AddWeightTest");
+                  setModalVisible(false); // Close main modal
+                  console.log("weight modal state: ", weightModalVisible);
+                  setTimeout(() => setWeightModalVisible(true), 200); // Open AddWeight modal
+                  console.log(
+                    "Weight button pressed, AddWeight modal opening..."
+                  );
+                  console.log("weight modal state: ", weightModalVisible);
                 }}
               >
                 <Text style={styles.buttonText}>Weight</Text>
@@ -92,6 +98,20 @@ const MainTabs = () => {
                 Close
               </Text>
             </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* AddWeight Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={weightModalVisible}
+        onRequestClose={() => setWeightModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <AddWeight onClose={() => setWeightModalVisible(false)} />
           </View>
         </View>
       </Modal>
@@ -181,9 +201,9 @@ const TabNavigator: React.FC = () => {
         options={{ title: "Folder Details" }}
       />
       <Stack.Screen
-        name="AddWeightTest"
-        component={AddWeightTest}
-        options={{ title: "Test AddWeight" }}
+        name="AddRun"
+        component={AddRun} // Register AddRun here
+        options={{ title: "Add Run" }} // Optional: Customize screen title
       />
     </Stack.Navigator>
   );
