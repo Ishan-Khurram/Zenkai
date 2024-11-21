@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 
-const FolderDetail = ({ route }) => {
+const RunFolderDetail = ({ route }) => {
   const { folderId, folderName } = route.params;
   const [runs, setRuns] = useState([]);
   const auth = getAuth();
@@ -71,7 +71,7 @@ const FolderDetail = ({ route }) => {
   );
 };
 
-export default FolderDetail;
+export default RunFolderDetail;
 
 const styles = StyleSheet.create({
   container: {

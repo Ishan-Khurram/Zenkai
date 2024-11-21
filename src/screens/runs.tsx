@@ -5,7 +5,6 @@ import {
   Text,
   ScrollView,
   TouchableHighlight,
-  Button,
 } from "react-native";
 import { getAuth } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
@@ -20,51 +19,43 @@ export default function Runs() {
   const userId = auth.currentUser?.uid;
   const navigation = useNavigation();
 
+  // Fetch folders on component mount
   useEffect(() => {
     if (userId) {
       fetchFolders();
     }
   }, [userId]);
 
+  // Handle adding a new folder
   const handleAddFolder = (newFolder) => {
     setFolders((prevFolders) => [...prevFolders, newFolder]);
   };
 
+  // Fetch folders from Firestore
   const fetchFolders = async () => {
     try {
-      console.log("UserId:", userId);
       const runFoldersRef = collection(
         FIREBASE_DB,
         "users",
         userId,
         "runFolders"
       );
-      console.log("Fetching from path: users", userId, "runFolders");
       const querySnapshot = await getDocs(runFoldersRef);
 
-      if (querySnapshot.empty) {
-        console.warn("No documents found in runFolders for this user.");
-        setFolders([]);
-        return;
-      }
-
       const folderData = querySnapshot.docs.map((doc) => ({
-        folderId: doc.id,
-        ...doc.data(),
+        folderId: doc.id, // Include folderId to use in navigation
+        folderName: doc.data().folderName,
+        runs: doc.data().runs || [],
       }));
-      console.log("Fetched folder data:", folderData);
-      console.log(
-        "Fetched folder data (detailed):",
-        JSON.stringify(folderData, null, 2)
-      );
       setFolders(folderData);
     } catch (error) {
       console.error("Error fetching folders:", error);
     }
   };
 
+  // Navigate to FolderDetail
   const handleFolderPress = (folderId, folderName) => {
-    navigation.navigate("FolderDetail", { folderId, folderName });
+    navigation.navigate("RunFolderDetail", { folderId, folderName });
   };
 
   return (
@@ -74,7 +65,7 @@ export default function Runs() {
         <Text style={styles.headerText}>Ishan's Runs</Text>
       </View>
 
-      {/* Scrollable Folder List */}
+      {/* Folder List */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {folders.map((folder) => (
           <TouchableHighlight

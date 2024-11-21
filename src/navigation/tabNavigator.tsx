@@ -25,6 +25,7 @@ import AddLift from "@/screens/addLift";
 import FolderDetail from "@/components/liftFolderData";
 import AddWeight from "@/components/addWeight";
 import AddRun from "@/screens/addRun";
+import RunFolderDetail from "@/components/runFolderData";
 
 type RootStackParamList = {
   MainTabs: undefined;
@@ -198,6 +199,11 @@ const TabNavigator: React.FC = () => {
       <Stack.Screen
         name="FolderDetail"
         component={FolderDetail}
+        options={{ title: "Folder Details" }}
+      />
+      <Stack.Screen
+        name="RunFolderDetail"
+        component={RunFolderDetail}
         options={{ title: "Folder Details" }}
       />
       <Stack.Screen
