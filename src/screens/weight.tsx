@@ -1,3 +1,4 @@
+// Weight.tsx
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, Text } from "react-native";
 import {
@@ -8,48 +9,57 @@ import {
   VictoryAxis,
 } from "victory-native";
 import { Table, Row, Rows } from "react-native-table-component";
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { getAuth } from "firebase/auth";
 
 export default function Weight() {
   const [weightData, setWeightData] = useState([]);
-
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
   useEffect(() => {
-    if (!userId) return;
+    const fetchData = async () => {
+      try {
+        // Reference to Firestore weights collection, ordered by date
+        const weightsRef = collection(
+          FIREBASE_DB,
+          "users",
+          userId,
+          "weightFolder"
+        );
+        const q = query(weightsRef, orderBy("date")); // Fetch in ascending order
+        const snapshot = await getDocs(q);
 
-    const weightsRef = collection(FIREBASE_DB, "users", userId, "weightFolder");
-    const q = query(weightsRef, orderBy("date")); // Fetch in ascending order
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs
-        .map((doc) => ({
+        const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }))
-        .sort((a, b) => new Date(a.date) - new Date(b.date)); // Explicit sort by date
+        }));
 
-      console.log("Sorted data (oldest to latest):", data); // Debugging log
-      setWeightData(data);
-    });
+        console.log("Fetched and sorted data:", data);
+        setWeightData(data); // Store sorted data directly
+      } catch (error) {
+        console.error("Error fetching weight data:", error);
+      }
+    };
 
-    return () => unsubscribe();
+    fetchData();
   }, [userId]);
 
-  // Table setup with headers and rows
+  // Table setup
   const tableHead = ["Date", "Weight"];
   const tableData = weightData.map((item) => [item.date, item.weight]);
 
   return (
     <View style={styles.background}>
+      {/* Header */}
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Ishan's Weight Trends</Text>
       </View>
 
+      {/* Content */}
       <ScrollView contentContainerStyle={styles.contentContainer}>
+        {/* Chart */}
         <View style={styles.chartContainer}>
           <ScrollView horizontal style={styles.scrollContainer}>
             <VictoryChart
@@ -92,6 +102,7 @@ export default function Weight() {
           </ScrollView>
         </View>
 
+        {/* Table */}
         <View style={styles.tableContainer}>
           <Table borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}>
             <Row data={tableHead} style={styles.head} textStyle={styles.text} />

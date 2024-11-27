@@ -5,7 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 
 export default function FolderDetail({ route }) {
-  const { folderId } = route.params;
+  const { folderId, folderName } = route.params;
   const [groupedExercises, setGroupedExercises] = useState([]);
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
@@ -58,7 +58,7 @@ export default function FolderDetail({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>{folderId}</Text>
+      <Text style={styles.headerText}>{folderName}</Text>
       <ScrollView>
         {groupedExercises.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.dateSection}>

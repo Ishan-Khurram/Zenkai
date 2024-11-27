@@ -22,9 +22,7 @@ export default function SettingScreen() {
       await signOut(FIREBASE_AUTH);
       router.replace("/"); // redirects to index.tsx upon signout.
       // After sign out, the component will re-render and show the login screen
-    } catch (error) {
-      console.error("Sign out error:", error);
-    }
+    } catch (error) {}
   };
 
   return (

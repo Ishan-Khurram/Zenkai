@@ -107,7 +107,6 @@ const MainTabs = () => {
           visible={true}
           onClose={() => {
             setWeightModalVisible(false);
-            console.log("AddWeight closed");
           }}
         />
       )}
