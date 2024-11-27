@@ -1,4 +1,3 @@
-// Weight.tsx
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, Text } from "react-native";
 import {
@@ -9,62 +8,48 @@ import {
   VictoryAxis,
 } from "victory-native";
 import { Table, Row, Rows } from "react-native-table-component";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { getAuth } from "firebase/auth";
 
 export default function Weight() {
-  // State to store weight data fetched from Firestore
   const [weightData, setWeightData] = useState([]);
 
-  // Get the current user ID from Firebase Auth
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
-  // Fetch weight data from Firestore on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Reference to the user's "weights" collection in Firestore, ordered by date
-        const weightsRef = collection(
-          FIREBASE_DB,
-          "users",
-          userId,
-          "weightFolder"
-        );
-        const q = query(weightsRef, orderBy("date"));
-        const snapshot = await getDocs(q);
+    if (!userId) return;
 
-        // Map Firestore data to an array for chart and table display
-        const data = snapshot.docs.map((doc) => ({
+    const weightsRef = collection(FIREBASE_DB, "users", userId, "weightFolder");
+    const q = query(weightsRef, orderBy("date")); // Fetch in ascending order
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs
+        .map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }));
+        }))
+        .sort((a, b) => new Date(a.date) - new Date(b.date)); // Explicit sort by date
 
-        console.log("Fetched data:", data); // Log fetched data to confirm it’s retrieved
-        setWeightData(data);
-      } catch (error) {
-        console.error("Error fetching weight data:", error);
-      }
-    };
+      console.log("Sorted data (oldest to latest):", data); // Debugging log
+      setWeightData(data);
+    });
 
-    fetchData();
+    return () => unsubscribe();
   }, [userId]);
 
-  // Table setup with headers and rows derived from `weightData`
+  // Table setup with headers and rows
   const tableHead = ["Date", "Weight"];
   const tableData = weightData.map((item) => [item.date, item.weight]);
 
   return (
     <View style={styles.background}>
-      {/* Header */}
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Ishan's Weight Trends</Text>
       </View>
 
-      {/* Content */}
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        {/* Chart */}
         <View style={styles.chartContainer}>
           <ScrollView horizontal style={styles.scrollContainer}>
             <VictoryChart
@@ -107,7 +92,6 @@ export default function Weight() {
           </ScrollView>
         </View>
 
-        {/* Table */}
         <View style={styles.tableContainer}>
           <Table borderStyle={{ borderWidth: 1, borderColor: "#C1C0B9" }}>
             <Row data={tableHead} style={styles.head} textStyle={styles.text} />

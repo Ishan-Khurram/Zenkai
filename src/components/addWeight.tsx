@@ -11,6 +11,7 @@ import {
 import { collection, addDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { getAuth } from "firebase/auth";
+import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 
 const AddWeight = ({ visible, onClose }) => {
   // state for weight and date input.
@@ -57,12 +58,7 @@ const AddWeight = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={onClose}
-    >
+    <View style={styles.overlay}>
       <View style={styles.container}>
         <Text style={styles.title}>Add Weight Entry</Text>
         <TextInput
@@ -81,20 +77,36 @@ const AddWeight = ({ visible, onClose }) => {
         <Button title="Submit" onPress={handleSubmit} />
         <Button title="Cancel" onPress={onClose} color="#ff5c5c" />
       </View>
-    </Modal>
+    </View>
   );
 };
 
 export default AddWeight;
 
 const styles = StyleSheet.create({
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center", // Center vertically
+    alignItems: "center", // Center horizontally
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent black background for overlay
+  },
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "rgba(255, 0, 0, 0.5)", // Debug red background
-    zIndex: 1000, // High z-index to ensure visibility
+    width: "80%", // Takes up 80% of the screen width
+    maxWidth: 400, // Limits the width on larger screens
+    padding: 20,
+    backgroundColor: "#fff", // White background for the modal content
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 1000,
   },
   title: {
     fontSize: 24,
@@ -103,11 +115,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   input: {
+    width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
     padding: 10,
-    marginBottom: 10,
-    backgroundColor: "#fff", // White background for inputs
+    marginBottom: 15,
+    backgroundColor: "#fff",
   },
 });

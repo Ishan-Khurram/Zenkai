@@ -6,7 +6,7 @@ import { FIREBASE_DB } from "firebaseConfig";
 
 export default function FolderDetail({ route }) {
   const { folderId } = route.params;
-  const [exercisesByDate, setExercisesByDate] = useState([]);
+  const [groupedExercises, setGroupedExercises] = useState([]);
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
@@ -25,7 +25,26 @@ export default function FolderDetail({ route }) {
         if (folderDoc.exists()) {
           const folderData = folderDoc.data();
           const fetchedExercises = folderData.exercises || [];
-          setExercisesByDate(fetchedExercises);
+
+          // Group exercises by date
+          const grouped = fetchedExercises.reduce((acc, exerciseEntry) => {
+            const date = exerciseEntry.date;
+            if (!acc[date]) {
+              acc[date] = [];
+            }
+            acc[date].push(...exerciseEntry.exercises);
+            return acc;
+          }, {});
+
+          // Convert grouped object to an array sorted by date
+          const groupedArray = Object.keys(grouped)
+            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Newest first
+            .map((date) => ({
+              date,
+              exercises: grouped[date],
+            }));
+
+          setGroupedExercises(groupedArray);
         } else {
           console.log("No such folder document found!");
         }
@@ -39,35 +58,55 @@ export default function FolderDetail({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Folder Details</Text>
+      <Text style={styles.headerText}>{folderId}</Text>
       <ScrollView>
-        {exercisesByDate
-          .slice()
-          .reverse()
-          .map((entry, entryIndex) => (
-            <View key={entryIndex} style={styles.dateSection}>
-              <Text style={styles.dateText}>Date: {entry.date}</Text>
+        {groupedExercises.map((group, groupIndex) => (
+          <View key={groupIndex} style={styles.dateSection}>
+            {/* Date Header */}
+            <Text style={styles.dateText}>Date: {group.date}</Text>
 
-              {entry.exercises.map((exercise, exerciseIndex) => (
-                <View key={exerciseIndex} style={styles.exerciseItem}>
-                  <Text style={styles.exerciseName}>{exercise.name}</Text>
+            {/* Exercises */}
+            {group.exercises.map((exercise, exerciseIndex) => (
+              <View key={exerciseIndex} style={styles.exerciseContainer}>
+                {/* Exercise Name */}
+                <Text style={styles.exerciseName}>{exercise.name}</Text>
 
-                  {exercise.sets?.length ? (
-                    exercise.sets.map((set, setIndex) => (
+                {/* Sets Information */}
+                {exercise.sets?.length ? (
+                  <View style={styles.setsContainer}>
+                    {exercise.sets.map((set, setIndex) => (
                       <View key={setIndex} style={styles.setDetails}>
-                        <Text>Set {setIndex + 1}</Text>
-                        <Text>Weight: {set.weight}</Text>
-                        <Text>Reps: {set.reps}</Text>
-                        <Text>Notes: {set.notes}</Text>
+                        <View style={styles.setInfoContainer}>
+                          <Text style={styles.setInfoTitle}>
+                            Set {setIndex + 1}
+                          </Text>
+                        </View>
+                        <View style={styles.setInfoRow}>
+                          <Text style={styles.detailLabel}>Weight:</Text>
+                          <Text style={styles.detailValue}>{set.weight}</Text>
+                        </View>
+                        <View style={styles.setInfoRow}>
+                          <Text style={styles.detailLabel}>Reps:</Text>
+                          <Text style={styles.detailValue}>{set.reps}</Text>
+                        </View>
+                        {set.notes ? (
+                          <View style={styles.notesContainer}>
+                            <Text style={styles.notesTitle}>Notes:</Text>
+                            <Text style={styles.notesValue}>{set.notes}</Text>
+                          </View>
+                        ) : null}
                       </View>
-                    ))
-                  ) : (
-                    <Text>No sets available for this exercise.</Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          ))}
+                    ))}
+                  </View>
+                ) : (
+                  <Text style={styles.noSetsText}>
+                    No sets available for this exercise.
+                  </Text>
+                )}
+              </View>
+            ))}
+          </View>
+        ))}
       </ScrollView>
     </View>
   );
@@ -86,27 +125,85 @@ const styles = StyleSheet.create({
   },
   dateSection: {
     marginBottom: 20,
-    padding: 10,
+    padding: 15,
     backgroundColor: "#e0f7fa",
-    borderRadius: 5,
+    borderRadius: 10,
   },
   dateText: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#333",
   },
-  exerciseItem: {
+  exerciseContainer: {
+    marginBottom: 15,
+    padding: 15,
     backgroundColor: "#f9f9f9",
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 5,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   exerciseName: {
     fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333",
+  },
+  setsContainer: {
+    marginTop: 10,
   },
   setDetails: {
-    paddingLeft: 10,
-    paddingVertical: 5,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  setInfoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  setInfoTitle: {
+    fontWeight: "bold",
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 5,
+  },
+  setInfoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 2,
+  },
+  detailLabel: {
+    fontSize: 14,
+    color: "#555",
+  },
+  detailValue: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  notesContainer: {
+    marginTop: 5,
+  },
+  notesTitle: {
+    fontWeight: "bold",
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 3,
+  },
+  notesValue: {
+    fontSize: 14,
+    color: "#333",
+    fontStyle: "italic",
+  },
+  noSetsText: {
+    fontSize: 14,
+    color: "#999",
+    fontStyle: "italic",
+    marginTop: 5,
   },
 });

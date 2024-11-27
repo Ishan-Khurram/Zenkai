@@ -162,6 +162,7 @@ const AddRun = () => {
             <TextInput
               style={styles.input}
               placeholder="Pace (e.g., 5:15 per km)"
+              keyboardType="numeric"
               value={pace}
               onChangeText={setPace}
             />

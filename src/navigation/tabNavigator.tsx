@@ -78,13 +78,11 @@ const MainTabs = () => {
               <Pressable
                 style={styles.button}
                 onPress={() => {
-                  setModalVisible(false); // Close main modal
-                  console.log("weight modal state: ", weightModalVisible);
-                  setTimeout(() => setWeightModalVisible(true), 200); // Open AddWeight modal
+                  setModalVisible(false);
+                  setWeightModalVisible(true); // Open AddWeight directly.
                   console.log(
-                    "Weight button pressed, AddWeight modal opening..."
+                    "Weight button pressed, AddWeight should be visible"
                   );
-                  console.log("weight modal state: ", weightModalVisible);
                 }}
               >
                 <Text style={styles.buttonText}>Weight</Text>
@@ -103,6 +101,17 @@ const MainTabs = () => {
         </View>
       </Modal>
 
+      {/* AddWeight Component */}
+      {weightModalVisible && (
+        <AddWeight
+          visible={true}
+          onClose={() => {
+            setWeightModalVisible(false);
+            console.log("AddWeight closed");
+          }}
+        />
+      )}
+
       {/* AddWeight Modal */}
       <Modal
         animationType="slide"
@@ -112,7 +121,10 @@ const MainTabs = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <AddWeight onClose={() => setWeightModalVisible(false)} />
+            <AddWeight
+              visible={true}
+              onClose={() => setWeightModalVisible(false)}
+            />
           </View>
         </View>
       </Modal>
@@ -199,12 +211,12 @@ const TabNavigator: React.FC = () => {
       <Stack.Screen
         name="FolderDetail"
         component={FolderDetail}
-        options={{ title: "Folder Details" }}
+        options={{ title: "Lifts" }}
       />
       <Stack.Screen
         name="RunFolderDetail"
         component={RunFolderDetail}
-        options={{ title: "Folder Details" }}
+        options={{ title: "Runs" }}
       />
       <Stack.Screen
         name="AddRun"
