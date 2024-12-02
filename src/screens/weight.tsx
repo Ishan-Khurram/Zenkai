@@ -1,4 +1,3 @@
-// Weight.tsx
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, Text } from "react-native";
 import {
@@ -28,7 +27,7 @@ export default function Weight() {
           userId,
           "weightFolder"
         );
-        const q = query(weightsRef, orderBy("date")); // Fetch in ascending order
+        const q = query(weightsRef, orderBy("date", "asc")); // Fetch in ascending order
         const snapshot = await getDocs(q);
 
         const data = snapshot.docs.map((doc) => ({

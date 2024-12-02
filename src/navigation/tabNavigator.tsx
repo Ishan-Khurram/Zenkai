@@ -26,6 +26,8 @@ import FolderDetail from "@/components/liftFolderData";
 import AddWeight from "@/components/addWeight";
 import AddRun from "@/screens/addRun";
 import RunFolderDetail from "@/components/runFolderData";
+// testing weight classr
+import WeightTest from "@/screens/testWeight";
 
 type RootStackParamList = {
   MainTabs: undefined;

@@ -57,6 +57,25 @@ const AddWeight = ({ visible, onClose }) => {
     }
   };
 
+  const formatDate = (input: string) => {
+    // REMOVE ALL NON NUMERIC CHARS.
+    const cleaned = input.replace(/\D/g, "");
+
+    // LIMIT TO ONLY 8 CHARS... MMDDYYYY // change to YYYY-MM-DD for sorting purposes.
+    const limited = cleaned.substring(0, 8);
+
+    if (limited.length >= 5) {
+      return `${limited.substring(0, 4)}-${limited.substring(
+        4,
+        6
+      )}-${limited.substring(6)}`;
+    } else if (limited.length >= 3) {
+      return `${limited.substring(0, 4)}-${limited.substring(4)}`;
+    } else {
+      return limited;
+    }
+  };
+
   return (
     <View style={styles.overlay}>
       <View style={styles.container}>
@@ -70,9 +89,11 @@ const AddWeight = ({ visible, onClose }) => {
         />
         <TextInput
           style={styles.input}
-          placeholder="Date (MM/DD/YYYY)"
+          placeholder="Date (YYYY-MM-DD)"
           value={date}
-          onChangeText={setDate}
+          onChangeText={(text) => setDate(formatDate(text))}
+          keyboardType="numeric"
+          maxLength={10} // inclusive of the dashes.
         />
         <Button title="Submit" onPress={handleSubmit} />
         <Button title="Cancel" onPress={onClose} color="#ff5c5c" />
