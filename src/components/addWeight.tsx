@@ -52,28 +52,30 @@ const AddWeight = ({ visible, onClose }) => {
       setDate("");
       onClose(); // Close the modal
     } catch (error) {
-      console.error("Error adding weight entry", error);
       Alert.alert("Failed to add weight entry, please try again.");
     }
   };
 
-  const formatDate = (input: string) => {
-    // REMOVE ALL NON NUMERIC CHARS.
+  const formatDate = (input) => {
+    // Remove all non-numeric characters.
     const cleaned = input.replace(/\D/g, "");
 
-    // LIMIT TO ONLY 8 CHARS... MMDDYYYY // change to YYYY-MM-DD for sorting purposes.
-    const limited = cleaned.substring(0, 8);
-
-    if (limited.length >= 5) {
-      return `${limited.substring(0, 4)}-${limited.substring(
-        4,
-        6
-      )}-${limited.substring(6)}`;
-    } else if (limited.length >= 3) {
-      return `${limited.substring(0, 4)}-${limited.substring(4)}`;
-    } else {
-      return limited;
+    // If input is empty or being deleted, return cleaned value
+    if (cleaned.length <= 4) {
+      return cleaned; // Allows user to delete freely
     }
+
+    // Construct formatted date as 'YYYY-MM-DD'
+    let formattedDate = cleaned;
+
+    if (cleaned.length > 4) {
+      formattedDate = `${cleaned.substring(0, 4)}-${cleaned.substring(4, 6)}`;
+    }
+    if (cleaned.length > 6) {
+      formattedDate += `-${cleaned.substring(6, 8)}`;
+    }
+
+    return formattedDate;
   };
 
   return (
@@ -111,17 +113,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    justifyContent: "center", // Center vertically
-    alignItems: "center", // Center horizontally
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent black background for overlay
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   container: {
-    width: "80%", // Takes up 80% of the screen width
-    maxWidth: 400, // Limits the width on larger screens
+    width: "80%",
+    maxWidth: 400,
     padding: 20,
-    backgroundColor: "#fff", // White background for the modal content
+    backgroundColor: "#fff",
     borderRadius: 15,
-    shadowColor: "#000",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,

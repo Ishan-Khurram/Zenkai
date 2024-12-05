@@ -154,7 +154,7 @@ const AddRun = () => {
             />
             <TextInput
               style={styles.input}
-              placeholder="Distance (km or miles)"
+              placeholder="Distance (km)"
               keyboardType="numeric"
               value={distance}
               onChangeText={setDistance}

@@ -26,8 +26,8 @@ import FolderDetail from "@/components/liftFolderData";
 import AddWeight from "@/components/addWeight";
 import AddRun from "@/screens/addRun";
 import RunFolderDetail from "@/components/runFolderData";
-// testing weight classr
-import WeightTest from "@/screens/testWeight";
+import RegisterScreen from "@/screens/register";
+import LegalNoticeScreen from "@/screens/legalNoticeScreen";
 
 type RootStackParamList = {
   MainTabs: undefined;
@@ -203,6 +203,16 @@ const TabNavigator: React.FC = () => {
 
   return (
     <Stack.Navigator>
+      {/* <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ headerShown: false }}
+      /> */}
+      {/* <Stack.Screen
+        name="Privacy Notice and TOS"
+        component={LegalNoticeScreen}
+        options={{ title: "Privacy Notice and TOS" }}
+      /> */}
       <Stack.Screen
         name="MainTabs"
         component={MainTabs}
@@ -212,17 +222,17 @@ const TabNavigator: React.FC = () => {
       <Stack.Screen
         name="FolderDetail"
         component={FolderDetail}
-        options={{ title: "Lifts" }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="RunFolderDetail"
         component={RunFolderDetail}
-        options={{ title: "Runs" }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddRun"
         component={AddRun} // Register AddRun here
-        options={{ title: "Add Run" }} // Optional: Customize screen title
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

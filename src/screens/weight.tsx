@@ -10,6 +10,7 @@ import {
 import { Table, Row, Rows } from "react-native-table-component";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
+import { onSnapshot } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 export default function Weight() {
@@ -28,15 +29,18 @@ export default function Weight() {
           "weightFolder"
         );
         const q = query(weightsRef, orderBy("date", "asc")); // Fetch in ascending order
-        const snapshot = await getDocs(q);
 
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        // listen to changes in REAL TIME.
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-        console.log("Fetched and sorted data:", data);
-        setWeightData(data); // Store sorted data directly
+          setWeightData(data); // Store sorted data directly
+        });
+        // Cleanup listener when component unmounts or userId changes
+        return () => unsubscribe();
       } catch (error) {
         console.error("Error fetching weight data:", error);
       }
