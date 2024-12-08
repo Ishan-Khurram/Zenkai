@@ -37,3 +37,4 @@ yarn-error.*
 
 # firebase config
 firebaseConfig.ts
+firebase-admin-key.json

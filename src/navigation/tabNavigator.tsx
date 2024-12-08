@@ -197,17 +197,17 @@ const TabNavigator: React.FC = () => {
           component={SignInScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     );
   }
 
   return (
     <Stack.Navigator>
-      {/* <Stack.Screen
-        name="Register"
-        component={RegisterScreen}
-        options={{ headerShown: false }}
-      /> */}
       {/* <Stack.Screen
         name="Privacy Notice and TOS"
         component={LegalNoticeScreen}

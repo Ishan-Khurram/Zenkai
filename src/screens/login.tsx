@@ -6,11 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigation } from "@react-navigation/native";
+import { sendEmailVerification } from "firebase/auth";
 
 interface SignInScreenProps {
   onSignIn: (email: string, password: string) => void;
@@ -22,20 +25,57 @@ export default function SignInScreen({ onSignIn }: SignInScreenProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const navigation = useNavigation();
+
   // Function to create a user document
   const createUserDoc = async (userId: string, userEmail: string) => {
     const userDocRef = doc(FIREBASE_DB, "users", userId);
     await setDoc(userDocRef, { email: userEmail });
   };
 
-  // Sign-in function
   const handleSignIn = async () => {
     if (email === "" || password === "") {
       setError("Please enter email and password.");
       return;
     }
     try {
-      await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // Check if the email is verified
+      if (!user.emailVerified) {
+        await FIREBASE_AUTH.signOut(); // Sign out the user immediately
+        Alert.alert(
+          "Email Not Verified",
+          "Your email is not verified. Please check your inbox or resend the verification email.",
+          [
+            {
+              text: "Resend Email",
+              onPress: async () => {
+                try {
+                  await sendEmailVerification(user);
+                  Alert.alert(
+                    "Verification Email Sent",
+                    "Please check your inbox for the verification email."
+                  );
+                } catch (error: any) {
+                  Alert.alert(
+                    "Error",
+                    "Failed to send verification email. Please try again later."
+                  );
+                }
+              },
+            },
+            { text: "Cancel", style: "cancel" },
+          ]
+        );
+        return;
+      }
+
       setError(""); // Clear error if successful
       console.log("User signed in successfully!"); // Or navigate to the next screen
     } catch (error: any) {
@@ -95,7 +135,7 @@ export default function SignInScreen({ onSignIn }: SignInScreenProps) {
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, styles.registerButton]}
-        onPress={handleRegister}
+        onPress={() => navigation.navigate("Register")}
       >
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>

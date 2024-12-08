@@ -8,6 +8,10 @@ import {
   ScrollView,
   Alert,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Platform,
 } from "react-native";
 import {
   collection,
@@ -36,7 +40,6 @@ const AddLift = () => {
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
 
-  // Fetch folders from Firestore on component mount
   useEffect(() => {
     const fetchFolders = async () => {
       try {
@@ -139,7 +142,6 @@ const AddLift = () => {
     }
 
     const newExercise = { name: exerciseName, sets };
-    console.log("Adding exercise:", newExercise);
     setExercises((prev) => [...prev, newExercise]);
 
     setExerciseName("");
@@ -156,24 +158,6 @@ const AddLift = () => {
       return;
     }
 
-    console.log("Starting save workout process...");
-
-    // Log current input fields before saving
-    console.log("Current exerciseName:", exerciseName);
-    console.log("Current sets:", sets);
-
-    if (
-      exerciseName &&
-      sets.length > 0 &&
-      !sets.some((set) => !set.weight || !set.reps)
-    ) {
-      const currentExercise = { name: exerciseName, sets };
-      console.log("Auto-adding current exercise before save:", currentExercise);
-      setExercises((prev) => [...prev, currentExercise]);
-    }
-
-    console.log("Exercises array before saving:", exercises);
-
     const today = format(new Date(), "yyyy-MM-dd");
     const folderRef = doc(
       FIREBASE_DB,
@@ -188,15 +172,12 @@ const AddLift = () => {
       exercises: [...exercises, { name: exerciseName, sets }],
     };
 
-    console.log("Prepared newExerciseData for Firestore:", newExerciseData);
-
     try {
       await updateDoc(folderRef, {
         exercises: arrayUnion(newExerciseData),
       });
       Alert.alert("Workout Saved", "Your workout has been saved!");
 
-      // Clear state after successful save
       setExercises([]);
       setExerciseName("");
       setNumSets("");
@@ -209,80 +190,148 @@ const AddLift = () => {
   };
 
   return (
-    <SafeAreaView>
-      <ScrollView contentContainerStyle={styles.container}>
-        {!selectedFolder ? (
-          <View>
-            <Text>Select a Folder:</Text>
-            {folders.length > 0 ? (
-              folders.map((folder, index) => (
-                <Button
-                  key={index}
-                  title={folder.name}
-                  onPress={() => handleSelectFolder(folder)}
-                />
-              ))
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
+          <SafeAreaView>
+            {!selectedFolder ? (
+              <View>
+                <Text>Select a Folder:</Text>
+                {folders.length > 0 ? (
+                  folders.map((folder, index) => (
+                    <Button
+                      key={index}
+                      title={folder.name}
+                      onPress={() => handleSelectFolder(folder)}
+                    />
+                  ))
+                ) : (
+                  <Text>No folders available.</Text>
+                )}
+              </View>
             ) : (
-              <Text>No folders available.</Text>
+              <View>
+                <Text style={styles.header}>
+                  Add Exercise to {selectedFolder.name}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Exercise Name"
+                  value={exerciseName}
+                  onChangeText={setExerciseName}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Number of Sets"
+                  keyboardType="numeric"
+                  value={numSets}
+                  onChangeText={handleNumSetsChange}
+                />
+                {renderSetInputs()}
+                <Button title="Add Exercise" onPress={handleAddExercise} />
+                <Button title="Save Workout" onPress={handleSaveWorkout} />
+              </View>
             )}
-          </View>
-        ) : (
-          <View>
-            <Text style={styles.header}>
-              Add Exercise to {selectedFolder.name}
-            </Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Exercise Name"
-              value={exerciseName}
-              onChangeText={setExerciseName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Number of Sets"
-              keyboardType="numeric"
-              value={numSets}
-              onChangeText={handleNumSetsChange}
-            />
-
-            {renderSetInputs()}
-
-            <Button title="Add Exercise" onPress={handleAddExercise} />
-            <Button title="Save Workout" onPress={handleSaveWorkout} />
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+          </SafeAreaView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    backgroundColor: "#f8f9fa", // Light background for a clean look
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   header: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#333", // Darker text for contrast
   },
   input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 5,
-  },
-  setContainer: {
-    marginTop: 10,
-    padding: 10,
-    borderRadius: 5,
     borderColor: "#ddd",
     borderWidth: 1,
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: "#fff",
+    marginVertical: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  setContainer: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 10,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   setTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#4CAF50", // Accent color for titles
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
     fontWeight: "bold",
+  },
+  folderButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  folderButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  noFoldersText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#999",
+    marginTop: 20,
   },
 });
 

@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
 
 export default function FolderDetail({ route }) {
   const { folderId, folderName } = route.params;
   const [groupedExercises, setGroupedExercises] = useState([]);
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -26,7 +35,6 @@ export default function FolderDetail({ route }) {
           const folderData = folderDoc.data();
           const fetchedExercises = folderData.exercises || [];
 
-          // Group exercises by date
           const grouped = fetchedExercises.reduce((acc, exerciseEntry) => {
             const date = exerciseEntry.date;
             if (!acc[date]) {
@@ -36,9 +44,8 @@ export default function FolderDetail({ route }) {
             return acc;
           }, {});
 
-          // Convert grouped object to an array sorted by date
           const groupedArray = Object.keys(grouped)
-            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Newest first
+            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
             .map((date) => ({
               date,
               exercises: grouped[date],
@@ -58,42 +65,38 @@ export default function FolderDetail({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>{folderName}</Text>
-      <ScrollView>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerText}>{folderName}</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         {groupedExercises.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.dateSection}>
-            {/* Date Header */}
             <Text style={styles.dateText}>Date: {group.date}</Text>
-
-            {/* Exercises */}
             {group.exercises.map((exercise, exerciseIndex) => (
               <View key={exerciseIndex} style={styles.exerciseContainer}>
-                {/* Exercise Name */}
                 <Text style={styles.exerciseName}>{exercise.name}</Text>
-
-                {/* Sets Information */}
                 {exercise.sets?.length ? (
                   <View style={styles.setsContainer}>
                     {exercise.sets.map((set, setIndex) => (
                       <View key={setIndex} style={styles.setDetails}>
-                        <View style={styles.setInfoContainer}>
-                          <Text style={styles.setInfoTitle}>
-                            Set {setIndex + 1}
-                          </Text>
-                        </View>
-                        <View style={styles.setInfoRow}>
-                          <Text style={styles.detailLabel}>Weight:</Text>
-                          <Text style={styles.detailValue}>{set.weight}</Text>
-                        </View>
-                        <View style={styles.setInfoRow}>
-                          <Text style={styles.detailLabel}>Reps:</Text>
-                          <Text style={styles.detailValue}>{set.reps}</Text>
-                        </View>
+                        <Text style={styles.setInfoTitle}>
+                          Set {setIndex + 1}
+                        </Text>
+                        <Text style={styles.detailValue}>
+                          Weight: {set.weight}
+                        </Text>
+                        <Text style={styles.detailValue}>Reps: {set.reps}</Text>
                         {set.notes ? (
-                          <View style={styles.notesContainer}>
-                            <Text style={styles.notesTitle}>Notes:</Text>
-                            <Text style={styles.notesValue}>{set.notes}</Text>
-                          </View>
+                          <Text style={styles.notesValue}>
+                            Notes: {set.notes}
+                          </Text>
                         ) : null}
                       </View>
                     ))}
@@ -115,13 +118,47 @@ export default function FolderDetail({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "white",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+    paddingBottom: 10,
+    backgroundColor: "#f0f0f0",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    height: "18%",
+    position: "relative",
+  },
+  scrollContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    backgroundColor: "white",
+  },
+  backButton: {
+    position: "absolute",
+    top: 60,
+    left: 15,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    width: 80,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  backButtonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000",
   },
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "#000",
+    flex: 1,
+    textAlign: "center",
   },
   dateSection: {
     marginBottom: 20,
@@ -162,48 +199,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
   },
-  setInfoContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
   setInfoTitle: {
     fontWeight: "bold",
     fontSize: 14,
     color: "#555",
     marginBottom: 5,
   },
-  setInfoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 2,
-  },
-  detailLabel: {
-    fontSize: 14,
-    color: "#555",
-  },
   detailValue: {
     fontSize: 14,
-    fontWeight: "bold",
     color: "#333",
-  },
-  notesContainer: {
-    marginTop: 5,
-  },
-  notesTitle: {
-    fontWeight: "bold",
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 3,
   },
   notesValue: {
     fontSize: 14,
-    color: "#333",
     fontStyle: "italic",
+    color: "#555",
   },
   noSetsText: {
     fontSize: 14,
     color: "#999",
     fontStyle: "italic",
-    marginTop: 5,
   },
 });
