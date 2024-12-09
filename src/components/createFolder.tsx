@@ -58,6 +58,8 @@ const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
     }
   };
 
+  // create char limit of 25
+
   return (
     <View style={styles.overlay}>
       <View style={styles.container}>

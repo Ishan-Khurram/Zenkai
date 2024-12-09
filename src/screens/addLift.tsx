@@ -12,6 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import {
   collection,
@@ -91,6 +92,7 @@ const AddLift = () => {
         <TextInput
           style={styles.input}
           placeholder="Weight"
+          keyboardType="numeric"
           value={set.weight}
           onChangeText={(text) =>
             setSets((prev) =>
@@ -103,6 +105,7 @@ const AddLift = () => {
         <TextInput
           style={styles.input}
           placeholder="Reps"
+          keyboardType="numeric"
           value={set.reps}
           onChangeText={(text) =>
             setSets((prev) =>
@@ -235,8 +238,19 @@ const AddLift = () => {
                   onChangeText={handleNumSetsChange}
                 />
                 {renderSetInputs()}
-                <Button title="Add Exercise" onPress={handleAddExercise} />
-                <Button title="Save Workout" onPress={handleSaveWorkout} />
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleAddExercise}
+                >
+                  <Text style={styles.buttonText}>Add Exercise</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleSaveWorkout}
+                >
+                  <Text style={styles.buttonText}>Save Workout</Text>
+                </TouchableOpacity>
               </View>
             )}
           </SafeAreaView>

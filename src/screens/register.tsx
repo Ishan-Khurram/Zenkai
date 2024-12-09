@@ -84,26 +84,17 @@ const RegisterScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0} // Adjust as needed
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
-        <SafeAreaView style={styles.container}>
-          {/* Back Button */}
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backButtonText}>← Back</Text>
-          </TouchableOpacity>
-
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={100}
+        >
           <Text style={styles.title}>Create Your Account</Text>
-
           <View style={styles.form}>
             <TextInput
               style={styles.input}
@@ -145,9 +136,9 @@ const RegisterScreen = () => {
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
           </View>
-        </SafeAreaView>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 

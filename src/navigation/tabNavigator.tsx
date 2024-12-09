@@ -200,7 +200,7 @@ const TabNavigator: React.FC = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
-          options={{ headerShown: false }}
+          // options={{ headerShown: false }}
         />
       </Stack.Navigator>
     );
