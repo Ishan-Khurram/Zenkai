@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -8,12 +8,17 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  User,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, initializeAuth } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { sendEmailVerification } from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface SignInScreenProps {
   onSignIn: (email: string, password: string) => void;
@@ -45,6 +50,9 @@ export default function SignInScreen({ onSignIn }: SignInScreenProps) {
         password
       );
       const user = userCredential.user;
+
+      // store user details within the async storage
+      await AsyncStorage.setItem("user", JSON.stringify(user));
 
       // Check if the email is verified
       if (!user.emailVerified) {
@@ -79,31 +87,26 @@ export default function SignInScreen({ onSignIn }: SignInScreenProps) {
       setError(""); // Clear error if successful
       console.log("User signed in successfully!"); // Or navigate to the next screen
     } catch (error: any) {
-      setError(error.message); // Display Firebase error message if sign-in fails
-    }
-  };
-
-  // Register function
-  const handleRegister = async () => {
-    if (email === "" || password === "") {
-      setError("Please enter email and password.");
-      return;
-    }
-    try {
-      const userCredentials = await createUserWithEmailAndPassword(
-        FIREBASE_AUTH,
-        email,
-        password
-      );
-      const userId = userCredentials.user.uid;
-      const userEmail = userCredentials.user.email ?? "";
-
-      await createUserDoc(userId, userEmail);
-      setError("");
-    } catch (error: any) {
       setError(error.message);
     }
   };
+
+  // restore authg session when relaunching app
+  const restoreAuthSession = async () => {
+    try {
+      const userData = await AsyncStorage.getItem("user");
+      if (userData) {
+        const user: User = JSON.parse(userData);
+        console.log("User restored from AsyncStorage:", user);
+      }
+    } catch (error) {
+      console.error("Error restoring auth session:", error);
+    }
+  };
+
+  useEffect(() => {
+    restoreAuthSession();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

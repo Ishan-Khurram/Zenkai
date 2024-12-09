@@ -59,17 +59,19 @@ const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Folder Name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter folder name"
-        value={folderName}
-        onChangeText={(text) => setFolderName(text)}
-      />
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <Button title="Create Folder" onPress={handleCreateFolder} />
-      <Button title="Close" onPress={onClose} />
+    <View style={styles.overlay}>
+      <View style={styles.container}>
+        <Text style={styles.label}>Folder Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter folder name"
+          value={folderName}
+          onChangeText={(text) => setFolderName(text)}
+        />
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        <Button title="Create Folder" onPress={handleCreateFolder} />
+        <Button title="Close" onPress={onClose} />
+      </View>
     </View>
   );
 };
@@ -77,15 +79,33 @@ const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
 export default CreateFolder;
 
 const styles = StyleSheet.create({
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
+    width: "80%",
+    maxWidth: 400,
     padding: 20,
-    backgroundColor: "white",
-    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 1000,
   },
   label: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
+    textAlign: "center",
   },
   input: {
     borderColor: "#ccc",
