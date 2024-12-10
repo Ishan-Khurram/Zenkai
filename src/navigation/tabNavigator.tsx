@@ -200,7 +200,7 @@ const TabNavigator: React.FC = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
-          // options={{ headerShown: false }}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     );
@@ -218,7 +218,11 @@ const TabNavigator: React.FC = () => {
         component={MainTabs}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="AddLift" component={AddLift} />
+      <Stack.Screen
+        name="AddLift"
+        component={AddLift}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="FolderDetail"
         component={FolderDetail}

@@ -17,7 +17,7 @@ import { sendEmailVerification } from "firebase/auth";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-const { width, height } = Dimensions.get("window"); // Get screen dimensions
+const { width, height } = Dimensions.get("window");
 
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState("");
@@ -84,33 +84,36 @@ const RegisterScreen = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={100}
     >
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={100}
-        >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <SafeAreaView style={styles.container}>
           <Text style={styles.title}>Create Your Account</Text>
-          <View style={styles.form}>
+          <View style={styles.card}>
             <TextInput
               style={styles.input}
               placeholder="First Name"
+              placeholderTextColor="#aaa"
               value={firstName}
               onChangeText={setFirstName}
             />
             <TextInput
               style={styles.input}
               placeholder="Last Name"
+              placeholderTextColor="#aaa"
               value={lastName}
               onChangeText={setLastName}
             />
             <TextInput
               style={styles.input}
               placeholder="Email"
+              placeholderTextColor="#aaa"
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
@@ -118,6 +121,7 @@ const RegisterScreen = () => {
             <TextInput
               style={styles.input}
               placeholder="Password"
+              placeholderTextColor="#aaa"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -125,87 +129,91 @@ const RegisterScreen = () => {
             <TextInput
               style={styles.input}
               placeholder="Confirm Password"
+              placeholderTextColor="#aaa"
               secureTextEntry
               value={passwordConfirmation}
               onChangeText={setPasswordConfirmation}
             />
-
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.secondaryButtonText}>← Back</Text>
+            </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </ScrollView>
+        </SafeAreaView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    flexGrow: 1, // Allows scrolling when keyboard is active
-    justifyContent: "center",
+    flexGrow: 1,
+    display: "flex",
   },
   container: {
     flex: 1,
-    width: "90%",
-    alignSelf: "center",
     justifyContent: "center",
-  },
-  backButton: {
-    position: "absolute",
-    top: height * 0.1, // Dynamic top positioning
-    left: width * 0.01, // Dynamic left positioning
-    paddingVertical: 5,
-  },
-  backButtonText: {
-    fontSize: width * 0.04, // Relative font size
-    color: "#4CAF50",
-    fontWeight: "bold",
+    backgroundColor: "#f2f5fa",
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: width * 0.07, // Title adjusts to screen width
+    fontSize: width * 0.07,
     fontWeight: "bold",
-    marginBottom: height * 0.1, // Dynamic vertical spacing
+    color: "#4CAF50",
     textAlign: "center",
-    color: "#333",
+    marginBottom: height * 0.03,
   },
-  form: {
-    backgroundColor: "white",
-    padding: width * 0.05, // Padding scales with screen width
-    borderRadius: 10,
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    shadowRadius: 10,
+    elevation: 5,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: width * 0.03, // Input padding scales with screen width
+    backgroundColor: "#f9f9f9",
     borderRadius: 8,
-    marginBottom: height * 0.02, // Dynamic spacing between inputs
-    fontSize: width * 0.045, // Font size adjusts to screen width
-    backgroundColor: "#f2f2f2",
+    padding: 15,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    marginBottom: 15,
+    color: "#333",
   },
   button: {
     backgroundColor: "#4CAF50",
-    paddingVertical: height * 0.02, // Vertical padding scales with screen height
-    borderRadius: 8,
+    paddingVertical: 15,
+    borderRadius: 10,
     alignItems: "center",
-    marginTop: height * 0.02, // Dynamic spacing above the button
+    marginTop: 10,
   },
   buttonText: {
-    color: "white",
-    fontSize: width * 0.05, // Button text scales with screen width
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  secondaryButton: {
+    marginTop: 15,
+    alignItems: "center",
+  },
+  secondaryButtonText: {
+    color: "#4CAF50",
+    fontSize: 16,
     fontWeight: "bold",
   },
   errorText: {
     color: "red",
     textAlign: "center",
-    marginBottom: height * 0.02, // Dynamic spacing below the error text
+    marginBottom: 10,
   },
 });
 

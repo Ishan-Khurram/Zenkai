@@ -24,6 +24,7 @@ import {
 import { FIREBASE_DB } from "firebaseConfig";
 import { getAuth } from "firebase/auth";
 import { format } from "date-fns";
+import { useNavigation } from "@react-navigation/native";
 
 const AddLift = () => {
   const [folders, setFolders] = useState<{ name: string; folderID: string }[]>(
@@ -40,6 +41,7 @@ const AddLift = () => {
 
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchFolders = async () => {
@@ -193,147 +195,82 @@ const AddLift = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
-        >
-          <SafeAreaView>
-            {!selectedFolder ? (
-              <View>
-                <Text>Select a Folder:</Text>
-                {folders.length > 0 ? (
-                  folders.map((folder, index) => (
-                    <Button
-                      key={index}
-                      title={folder.name}
-                      onPress={() => handleSelectFolder(folder)}
-                    />
-                  ))
-                ) : (
-                  <Text>No folders available.</Text>
-                )}
-              </View>
-            ) : (
-              <View>
-                <Text style={styles.header}>
-                  Add Exercise to {selectedFolder.name}
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Exercise Name"
-                  value={exerciseName}
-                  onChangeText={setExerciseName}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Number of Sets"
-                  keyboardType="numeric"
-                  value={numSets}
-                  onChangeText={handleNumSetsChange}
-                />
-                {renderSetInputs()}
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleAddExercise}
-                >
-                  <Text style={styles.buttonText}>Add Exercise</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleSaveWorkout}
-                >
-                  <Text style={styles.buttonText}>Save Workout</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Select a Workout Folder</Text>
+      </View>
+      {!selectedFolder ? (
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <Text style={styles.title}>Available Folders:</Text>
+          {folders.length > 0 ? (
+            folders.map((folder, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.folderButton}
+                onPress={() => handleSelectFolder(folder)}
+              >
+                <Text style={styles.folderButtonText}>{folder.name}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noFoldersText}>No folders available.</Text>
+          )}
         </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      ) : (
+        <View style={styles.selectedFolderContainer}>
+          <Text style={styles.selectedFolderText}>
+            Selected Folder: {selectedFolder.name}
+          </Text>
+        </View>
+      )}
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: "#f8f9fa", // Light background for a clean look
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    flex: 1,
+    backgroundColor: "#f8f9fa",
   },
   header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#333", // Darker text for contrast
-  },
-  input: {
-    borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: "#fff",
-    marginVertical: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  setContainer: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 10,
-    borderColor: "#ddd",
-    borderWidth: 1,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  setTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#4CAF50", // Accent color for titles
-    marginBottom: 10,
-  },
-  button: {
     backgroundColor: "#4CAF50",
-    paddingVertical: 12,
-    borderRadius: 10,
     alignItems: "center",
-    marginTop: 15,
+    justifyContent: "center",
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
     elevation: 3,
   },
-  buttonText: {
+  headerText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
+  },
+  scrollContent: {
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+    color: "#333",
   },
   folderButton: {
     backgroundColor: "#007BFF",
-    paddingVertical: 12,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
     borderRadius: 10,
+    marginVertical: 10,
     alignItems: "center",
-    marginBottom: 15,
+    width: "90%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 5,
     elevation: 3,
   },
   folderButtonText: {
@@ -342,10 +279,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   noFoldersText: {
-    textAlign: "center",
     fontSize: 16,
-    color: "#999",
+    color: "#aaa",
+    textAlign: "center",
     marginTop: 20,
+  },
+  selectedFolderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedFolderText: {
+    fontSize: 18,
+    color: "#4CAF50",
+    fontWeight: "bold",
   },
 });
 
