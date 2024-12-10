@@ -195,71 +195,123 @@ const AddLift = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {!selectedFolder ? (
-        <>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>Select a Workout Folder</Text>
-          </View>
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.title}>Available Folders:</Text>
-            {folders.length > 0 ? (
-              folders.map((folder, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.folderButton}
-                  onPress={() => handleSelectFolder(folder)}
-                >
-                  <Text style={styles.folderButtonText}>{folder.name}</Text>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <Text style={styles.noFoldersText}>No folders available.</Text>
-            )}
-          </ScrollView>
-        </>
-      ) : (
-        <>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>
-              Add Workout Data to {selectedFolder.name}
-            </Text>
-          </View>
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            <TextInput
-              style={styles.input}
-              placeholder="Exercise Name"
-              value={exerciseName}
-              onChangeText={setExerciseName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Number of Sets"
-              keyboardType="numeric"
-              value={numSets}
-              onChangeText={handleNumSetsChange}
-            />
-            {renderSetInputs()}
-            <TouchableOpacity style={styles.button} onPress={handleAddExercise}>
-              <Text style={styles.buttonText}>Add Exercise</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.saveButton]}
-              onPress={handleSaveWorkout}
-            >
-              <Text style={styles.buttonText}>Save Workout</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </>
-      )}
-    </SafeAreaView>
+    <>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            if (selectedFolder) {
+              setSelectedFolder(null); // Reset folder selection
+            } else {
+              navigation.goBack(); // Navigate back if no folder is selected
+            }
+          }}
+          style={styles.backButton}
+        >
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerText}>
+          {!selectedFolder
+            ? "Select a Workout Folder"
+            : `Add Workout to ${selectedFolder.name}`}
+        </Text>
+      </View>
+      <View style={styles.container}>
+        {!selectedFolder ? (
+          <>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+              {folders.length > 0 ? (
+                folders.map((folder, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.folderButton}
+                    onPress={() => handleSelectFolder(folder)}
+                  >
+                    <Text style={styles.folderButtonText}>{folder.name}</Text>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <Text style={styles.noFoldersText}>No folders available.</Text>
+              )}
+            </ScrollView>
+          </>
+        ) : (
+          <>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+              <TextInput
+                style={styles.input}
+                placeholder="Exercise Name"
+                value={exerciseName}
+                onChangeText={setExerciseName}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Number of Sets"
+                keyboardType="numeric"
+                value={numSets}
+                onChangeText={handleNumSetsChange}
+              />
+              {renderSetInputs()}
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleAddExercise}
+              >
+                <Text style={styles.buttonText}>Add Exercise</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.saveButton]}
+                onPress={handleSaveWorkout}
+              >
+                <Text style={styles.buttonText}>Save Workout</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </>
+        )}
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "white",
+    paddingTop: "40%",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+    paddingBottom: 10,
+    backgroundColor: "#f0f0f0",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    height: "18%",
+    position: "absolute",
+    width: "100%",
+    zIndex: 1,
+  },
+  backButton: {
+    position: "absolute",
+    top: 60,
+    left: 15,
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    width: 80,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  backButtonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000",
+    flex: 1,
+    textAlign: "center",
   },
   header: {
     backgroundColor: "#4CAF50",
@@ -273,14 +325,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
-  headerText: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
   scrollContent: {
-    padding: 20,
-    justifyContent: "center",
+    padding: 10,
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   title: {
@@ -337,7 +384,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   saveButton: {
-    backgroundColor: "#007BFF", // Blue for the save button
+    backgroundColor: "#007BFF",
   },
   buttonText: {
     color: "#fff",
