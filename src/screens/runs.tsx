@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
 } from "react-native";
 import { getAuth } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import CreateFolder from "@/components/createFolder";
@@ -21,37 +21,21 @@ export default function Runs() {
 
   // Fetch folders on component mount
   useEffect(() => {
-    if (userId) {
-      fetchFolders();
-    }
-  }, [userId]);
+    if (!userId) return;
 
-  // Handle adding a new folder
-  const handleAddFolder = (newFolder) => {
-    setFolders((prevFolders) => [...prevFolders, newFolder]);
-  };
+    const foldersRef = collection(FIREBASE_DB, "users", userId, "runFolders");
 
-  // Fetch folders from Firestore
-  const fetchFolders = async () => {
-    try {
-      const runFoldersRef = collection(
-        FIREBASE_DB,
-        "users",
-        userId,
-        "runFolders"
-      );
-      const querySnapshot = await getDocs(runFoldersRef);
-
-      const folderData = querySnapshot.docs.map((doc) => ({
-        folderId: doc.id, // Include folderId to use in navigation
+    const unsubscribe = onSnapshot(foldersRef, (snapshot) => {
+      const updatedFolders = snapshot.docs.map((doc) => ({
         folderName: doc.data().folderName,
-        runs: doc.data().runs || [],
+        folderId: doc.id,
       }));
-      setFolders(folderData);
-    } catch (error) {
-      console.error("Error fetching folders:", error);
-    }
-  };
+      setFolders(updatedFolders);
+    });
+
+    // Clean up listener when component unmounts
+    return () => unsubscribe();
+  }, [userId]);
 
   // Navigate to FolderDetail
   const handleFolderPress = (folderId, folderName) => {
@@ -95,7 +79,6 @@ export default function Runs() {
         <CreateFolder
           userId={userId}
           onClose={() => setFolderModalVisible(false)}
-          onAddFolder={handleAddFolder}
           folderType="runFolders"
         />
       )}

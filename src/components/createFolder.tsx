@@ -3,17 +3,17 @@ import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 
-const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
+const CreateFolder = ({ userId, onClose, folderType }) => {
   const [folderName, setFolderName] = useState("");
   const [error, setError] = useState("");
 
-  // .trim to remove extra whitespace
+  // Handle creating a folder
   const handleCreateFolder = async () => {
     if (!folderName.trim()) {
       setError("Folder name cannot be empty.");
       return;
     }
-    // reference lift folders.
+
     try {
       const liftFoldersRef = collection(
         FIREBASE_DB,
@@ -22,21 +22,21 @@ const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
         folderType
       );
       const docData = await getDocs(liftFoldersRef);
+
+      // Check maximum folder limit
       if (docData.size >= 10) {
         setError("You can only create up to 10 folders.");
         return;
       }
 
-      // go over all folder names.
+      // Check for duplicate folder names
       const folderNames = docData.docs.map((doc) => doc.data().folderName);
-
-      // check for dup name in folders.
       if (folderNames.includes(folderName.trim())) {
         setError("Folder name already exists.");
         return;
       }
 
-      // adding a new folder
+      // Add a new folder
       const newFolder = {
         folderName: folderName.trim(),
         createdAt: new Date().toISOString(),
@@ -44,11 +44,9 @@ const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
       };
       await addDoc(liftFoldersRef, newFolder);
 
-      // param add folder is called upon to update UI with new Folder.
-      onAddFolder(newFolder);
       alert("Folder Successfully Created!");
 
-      // clear modal and reset input
+      // Clear modal and reset input
       setFolderName("");
       setError("");
       onClose();
@@ -57,8 +55,6 @@ const CreateFolder = ({ userId, onClose, onAddFolder, folderType }) => {
       setError("Failed to create folder, please try again.");
     }
   };
-
-  // create char limit of 25
 
   return (
     <View style={styles.overlay}>
