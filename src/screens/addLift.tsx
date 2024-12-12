@@ -215,7 +215,10 @@ const AddLift = () => {
             : `Add Workout to ${selectedFolder.name}`}
         </Text>
       </View>
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         {!selectedFolder ? (
           <>
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -266,7 +269,7 @@ const AddLift = () => {
             </ScrollView>
           </>
         )}
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -275,7 +278,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: "40%",
   },
   headerContainer: {
     flexDirection: "row",
@@ -286,9 +288,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     height: "18%",
-    position: "absolute",
-    width: "100%",
-    zIndex: 1,
   },
   backButton: {
     position: "absolute",
