@@ -5,19 +5,44 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import { FIREBASE_AUTH } from "firebaseConfig";
-import { signOut } from "firebase/auth";
+import { FIREBASE_AUTH, FIREBASE_DB } from "firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
+import { signOut, getAuth, sendPasswordResetEmail } from "firebase/auth";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
 
 export default function SettingScreen() {
   const router = useRoute();
+  const auth = getAuth();
+
   const handleAccountPress = () => {
     // Navigate to Account Settings screen
   };
 
   // password change goes here
+  const handlePasswordReset = async () => {
+    const userEmail = auth.currentUser.email;
+
+    if (!userEmail) {
+      Alert.alert("Error", "No email found for the current user.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, userEmail);
+      Alert.alert(
+        "Password Reset Email Sent",
+        "Please check your inbox for the password reset email."
+      );
+    } catch (error) {
+      const errorMessage = error.message;
+      Alert.alert(
+        "Error",
+        `Failed to send password reset email. ${errorMessage}`
+      );
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -37,7 +62,7 @@ export default function SettingScreen() {
           <Text style={styles.buttonText}>Account</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.button} onPress={handleAccountPress}>
+        <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
           <Text style={styles.buttonText}>Change Password</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
