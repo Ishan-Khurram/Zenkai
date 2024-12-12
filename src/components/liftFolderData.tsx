@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
+import { Alert } from "react-native";
 import { getAuth } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
@@ -63,6 +64,53 @@ export default function FolderDetail({ route }) {
     if (userId && folderId) fetchExercises();
   }, [userId, folderId]);
 
+  // function to delete folder.
+  const deleteCurrentFolder = async () => {
+    try {
+      // Ensure folderId and userId are defined
+      if (!folderId || !userId) {
+        throw new Error("Folder ID or User ID is not available.");
+      }
+
+      // Create a reference to the document
+      const folderRef = doc(
+        FIREBASE_DB,
+        "users",
+        userId,
+        "liftFolders",
+        folderId
+      );
+
+      // Show a confirmation alert
+      Alert.alert(
+        "Confirm Deletion",
+        "This action cannot be undone. Are you sure you want to delete this folder?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Deletion canceled"),
+            style: "cancel",
+          },
+          {
+            text: "Delete",
+            onPress: async () => {
+              try {
+                // Delete the document
+                await deleteDoc(folderRef);
+                console.log("Folder deleted successfully.");
+              } catch (error) {
+                console.error("Error deleting folder: ", error);
+              }
+            },
+            style: "destructive",
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Error in deleteCurrentFolder: ", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -71,6 +119,12 @@ export default function FolderDetail({ route }) {
           style={styles.backButton}
         >
           <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => deleteCurrentFolder()}
+          style={styles.deleteButton}
+        >
+          <Text>🗑</Text>
         </TouchableOpacity>
         <Text style={styles.headerText}>{folderName}</Text>
       </View>
@@ -147,11 +201,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   backButtonText: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#000",
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 60,
+    right: 15,
+    backgroundColor: "red",
+    borderRadius: 20,
+    width: 80,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerText: {
     fontSize: 24,

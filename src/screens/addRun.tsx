@@ -3,12 +3,12 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
-  ScrollView,
   Alert,
-  SafeAreaView,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import {
   collection,
@@ -23,13 +23,8 @@ import { format } from "date-fns";
 import { useNavigation } from "@react-navigation/native";
 
 const AddRun = () => {
-  const [folders, setFolders] = useState<{ name: string; folderID: string }[]>(
-    []
-  );
-  const [selectedFolder, setSelectedFolder] = useState<{
-    name: string;
-    folderID: string;
-  } | null>(null);
+  const [folders, setFolders] = useState([]);
+  const [selectedFolder, setSelectedFolder] = useState(null);
   const [name, setName] = useState("");
   const [distance, setDistance] = useState("");
   const [pace, setPace] = useState("");
@@ -40,7 +35,6 @@ const AddRun = () => {
   const userId = auth.currentUser?.uid;
   const navigation = useNavigation();
 
-  // Fetch folders from Firestore on component mount
   useEffect(() => {
     const fetchFolders = async () => {
       try {
@@ -65,11 +59,8 @@ const AddRun = () => {
     fetchFolders();
   }, [userId]);
 
-  const handleSelectFolder = (folder) => {
-    setSelectedFolder(folder);
-  };
+  const handleSelectFolder = (folder) => setSelectedFolder(folder);
 
-  // Save run data to Firestore
   const handleSaveRun = async () => {
     if (!selectedFolder) {
       Alert.alert(
@@ -88,10 +79,11 @@ const AddRun = () => {
     }
 
     const today = format(new Date(), "yyyy-MM-dd");
+
     const runData = {
       date: today,
       name,
-      distance: parseFloat(distance), // Save distance as a number
+      distance: parseFloat(distance),
       pace,
       duration,
       notes,
@@ -110,7 +102,6 @@ const AddRun = () => {
       });
       Alert.alert("Success", `Run saved to folder: ${selectedFolder.name}!`);
 
-      // Reset inputs and folder selection after saving
       setName("");
       setDistance("");
       setPace("");
@@ -129,9 +120,9 @@ const AddRun = () => {
         <TouchableOpacity
           onPress={() => {
             if (selectedFolder) {
-              setSelectedFolder(null); // Reset folder selection
+              setSelectedFolder(null);
             } else {
-              navigation.goBack(); // Navigate back if no folder is selected
+              navigation.goBack();
             }
           }}
           style={styles.backButton}
@@ -144,8 +135,10 @@ const AddRun = () => {
             : `Add Run to ${selectedFolder.name}`}
         </Text>
       </View>
-
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         {!selectedFolder ? (
           <ScrollView contentContainerStyle={styles.scrollContent}>
             {folders.length > 0 ? (
@@ -200,7 +193,7 @@ const AddRun = () => {
             </TouchableOpacity>
           </ScrollView>
         )}
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -209,7 +202,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    paddingTop: "40%", // Adjusted for header spacing
   },
   headerContainer: {
     flexDirection: "row",
@@ -220,9 +212,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     height: "18%",
-    position: "absolute",
-    width: "100%",
-    zIndex: 1,
   },
   backButton: {
     position: "absolute",
@@ -262,11 +251,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: "#333",
     width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
   },
   button: {
     backgroundColor: "#4CAF50",
@@ -275,11 +259,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
     width: "100%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
   },
   buttonText: {
     color: "#fff",
@@ -294,11 +273,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: "center",
     width: "90%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
   },
   folderButtonText: {
     color: "#fff",

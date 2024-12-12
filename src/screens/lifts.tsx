@@ -57,7 +57,7 @@ export default function Lifts() {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Ishan's Lifts</Text>
+        <Text style={styles.headerText}>Lifts</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>

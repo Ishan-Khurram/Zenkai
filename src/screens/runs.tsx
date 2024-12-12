@@ -62,7 +62,7 @@ export default function Runs() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Ishan's Runs</Text>
+        <Text style={styles.headerText}>Runs</Text>
       </View>
 
       {/* Folder List */}

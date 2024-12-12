@@ -6,10 +6,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { getAuth } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
+import { deleteDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 export default function RunFolderData({ route }) {
@@ -20,19 +22,18 @@ export default function RunFolderData({ route }) {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchRuns = async () => {
-      try {
-        const folderDocRef = doc(
-          FIREBASE_DB,
-          "users",
-          userId,
-          "runFolders",
-          folderId
-        );
-        const folderDoc = await getDoc(folderDocRef);
+    if (userId && folderId) {
+      const folderDocRef = doc(
+        FIREBASE_DB,
+        "users",
+        userId,
+        "runFolders",
+        folderId
+      );
 
-        if (folderDoc.exists()) {
-          const folderData = folderDoc.data();
+      const unsubscribe = onSnapshot(folderDocRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const folderData = snapshot.data();
           const fetchedRuns = folderData.runs || [];
 
           const grouped = fetchedRuns.reduce((acc, runEntry) => {
@@ -54,14 +55,61 @@ export default function RunFolderData({ route }) {
           setGroupedRuns(groupedArray);
         } else {
           console.log("No such folder document found!");
+          setGroupedRuns([]);
         }
-      } catch (error) {
-        console.error("Error fetching runs:", error);
-      }
-    };
+      });
 
-    if (userId && folderId) fetchRuns();
+      // Clean up the listener when the component unmounts or the folder changes
+      return () => unsubscribe();
+    }
   }, [userId, folderId]);
+
+  // function to delete folder.
+  const deleteCurrentFolder = async () => {
+    try {
+      // Ensure folderId and userId are defined
+      if (!folderId || !userId) {
+        throw new Error("Folder ID or User ID is not available.");
+      }
+
+      // Create a reference to the document
+      const folderRef = doc(
+        FIREBASE_DB,
+        "users",
+        userId,
+        "runFolders",
+        folderId
+      );
+
+      // Show a confirmation alert
+      Alert.alert(
+        "Confirm Deletion",
+        "This action cannot be undone. Are you sure you want to delete this folder?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Deletion canceled"),
+            style: "cancel",
+          },
+          {
+            text: "Delete",
+            onPress: async () => {
+              try {
+                // Delete the document
+                await deleteDoc(folderRef);
+                console.log("Folder deleted successfully.");
+              } catch (error) {
+                console.error("Error deleting folder: ", error);
+              }
+            },
+            style: "destructive",
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Error in deleteCurrentFolder: ", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -73,6 +121,12 @@ export default function RunFolderData({ route }) {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => deleteCurrentFolder()}
+          style={styles.deleteButton}
+        >
+          <Text>🗑</Text>
+        </TouchableOpacity>
         <Text style={styles.headerText}>{folderName}</Text>
       </View>
 
@@ -83,8 +137,18 @@ export default function RunFolderData({ route }) {
             {group.runs.map((run, runIndex) => (
               <View key={runIndex} style={styles.runContainer}>
                 <Text style={styles.runName}>{run.name}</Text>
-                <Text style={styles.runDetail}>Distance: {run.distance}</Text>
-                <Text style={styles.runDetail}>Duration: {run.duration}</Text>
+                <View style={styles.runDetailContainer}>
+                  <Text style={styles.detailKey}>Distance:</Text>
+                  <Text style={styles.detailValue}>{run.distance} km</Text>
+                </View>
+                <View style={styles.runDetailContainer}>
+                  <Text style={styles.detailKey}>Pace:</Text>
+                  <Text style={styles.detailValue}>{run.pace} min/km</Text>
+                </View>
+                <View style={styles.runDetailContainer}>
+                  <Text style={styles.detailKey}>Duration:</Text>
+                  <Text style={styles.detailValue}>{run.duration}</Text>
+                </View>
                 {run.notes ? (
                   <Text style={styles.runNotes}>Notes: {run.notes}</Text>
                 ) : null}
@@ -115,9 +179,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   scrollContainer: {
-    paddingVertical: 20,
+    paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: "white",
+    backgroundColor: "#fafafa",
   },
   backButton: {
     position: "absolute",
@@ -135,6 +199,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
   },
+  deleteButton: {
+    position: "absolute",
+    top: 60,
+    right: 15,
+    backgroundColor: "red",
+    borderRadius: 20,
+    width: 80,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
@@ -145,38 +220,62 @@ const styles = StyleSheet.create({
   dateSection: {
     marginBottom: 20,
     padding: 15,
-    backgroundColor: "#e0f7fa",
+    backgroundColor: "#f7f9fc",
     borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   dateText: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#1f2937",
   },
   runContainer: {
     marginBottom: 15,
     padding: 15,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
+    backgroundColor: "#fff",
+    borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
   },
   runName: {
-    fontSize: 16,
+    fontSize: 20, // Make it larger than other fonts
     fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
+    color: "#1f2937",
+    textAlign: "center", // Center the text horizontally
+    marginBottom: 10, // Add spacing xbelow the title
+  },
+  runDetailContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
   },
   runDetail: {
     fontSize: 14,
-    color: "#333",
+    color: "#4b5563",
+  },
+  detailKey: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#111827",
+  },
+  detailValue: {
+    fontSize: 14,
+    color: "#111827",
   },
   runNotes: {
     fontSize: 14,
     fontStyle: "italic",
-    color: "#555",
+    color: "#6b7280",
+    marginTop: 10,
   },
 });

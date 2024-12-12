@@ -17,6 +17,8 @@ export default function SettingScreen() {
     // Navigate to Account Settings screen
   };
 
+  // password change goes here
+
   const handleSignOut = async () => {
     try {
       await signOut(FIREBASE_AUTH);
@@ -28,20 +30,21 @@ export default function SettingScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Image style={styles.image} source={require("../images/icon.jpeg")} />
-        <Text style={styles.headerText}>Ishan Khurram</Text>
+        <Text style={styles.headerText}>Settings</Text>
       </View>
       <View style={styles.bodyContainer}>
-        <ScrollView>
-          <TouchableOpacity style={styles.button} onPress={handleAccountPress}>
-            <Text style={styles.buttonText}>Account</Text>
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-            <Text style={styles.buttonText}>Sign Out</Text>
-          </TouchableOpacity>
-          {/* Add more buttons as needed, with separators */}
-        </ScrollView>
+        <TouchableOpacity style={styles.button} onPress={handleAccountPress}>
+          <Text style={styles.buttonText}>Account</Text>
+        </TouchableOpacity>
+        <View style={styles.separator} />
+        <TouchableOpacity style={styles.button} onPress={handleAccountPress}>
+          <Text style={styles.buttonText}>Change Password</Text>
+        </TouchableOpacity>
+        <View style={styles.separator} />
+        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+          <Text style={styles.buttonText}>Sign Out</Text>
+        </TouchableOpacity>
+        {/* Add more buttons as needed, with separators */}
       </View>
     </View>
   );
@@ -54,12 +57,12 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    height: "20%",
+    alignItems: "flex-end",
     paddingHorizontal: 20,
     paddingVertical: 20,
     backgroundColor: "#f0f0f0",
     borderRadius: 20,
+    height: "20%",
   },
   headerText: {
     flex: 1,
@@ -68,7 +71,6 @@ const styles = StyleSheet.create({
     lineHeight: 32,
     fontWeight: "bold",
     color: "#000",
-    top: "10%",
   },
   image: {
     top: "10%",

@@ -57,7 +57,7 @@ export default function Weight() {
     <View style={styles.background}>
       {/* Header */}
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Ishan's Weight Trends</Text>
+        <Text style={styles.headerText}>Weight Trends</Text>
       </View>
 
       {/* Content */}

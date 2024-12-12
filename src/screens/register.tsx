@@ -83,6 +83,8 @@ const RegisterScreen = () => {
     await sendEmailConfirmation();
   };
 
+  // Link to tos here. Make it a box the user must click to register, or refresh screen.
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
