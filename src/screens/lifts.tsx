@@ -8,7 +8,7 @@ import {
   Button,
 } from "react-native";
 import { getAuth } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import CreateFolder from "@/components/createFolder";
@@ -20,15 +20,23 @@ export default function Lifts() {
   const userId = auth.currentUser?.uid;
   const navigation = useNavigation();
 
+  // Fetch folders on component mount
   useEffect(() => {
-    if (userId) {
-      fetchFolders();
-    }
-  }, [userId]);
+    if (!userId) return;
 
-  const handleAddFolder = (newFolder) => {
-    setFolders((prevFolders) => [...prevFolders, newFolder]);
-  };
+    const foldersRef = collection(FIREBASE_DB, "users", userId, "liftFolders");
+
+    const unsubscribe = onSnapshot(foldersRef, (snapshot) => {
+      const updatedFolders = snapshot.docs.map((doc) => ({
+        folderName: doc.data().folderName,
+        folderId: doc.id,
+      }));
+      setFolders(updatedFolders);
+    });
+
+    // Clean up listener when component unmounts
+    return () => unsubscribe();
+  }, [userId]);
 
   const fetchFolders = async () => {
     try {
@@ -87,7 +95,6 @@ export default function Lifts() {
         <CreateFolder
           userId={userId}
           onClose={() => setFolderModalVisible(false)}
-          onAddFolder={handleAddFolder}
           folderType="liftFolders"
         />
       )}
