@@ -202,6 +202,11 @@ const TabNavigator: React.FC = () => {
           component={RegisterScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="LegalNoticeScreen"
+          component={LegalNoticeScreen}
+          options={{ title: "Privacy Notice and TOS" }}
+        />
       </Stack.Navigator>
     );
   }

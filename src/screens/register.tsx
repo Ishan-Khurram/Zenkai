@@ -7,6 +7,7 @@ import {
   Alert,
   Dimensions,
   SafeAreaView,
+  Button,
   KeyboardAvoidingView,
   ScrollView,
   Platform,
@@ -16,6 +17,8 @@ import { FIREBASE_AUTH } from "firebaseConfig";
 import { sendEmailVerification } from "firebase/auth";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import Checkbox from "expo-checkbox";
+import LegalNoticeScreen from "./legalNoticeScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,6 +29,7 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [error, setError] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
 
   const navigation = useNavigation();
 
@@ -37,6 +41,10 @@ const RegisterScreen = () => {
       return false;
     }
     return true;
+  };
+
+  const handleAgreementToTermsOfService = (newValue) => {
+    setIsChecked(newValue);
   };
 
   const sendEmailConfirmation = async () => {
@@ -77,9 +85,15 @@ const RegisterScreen = () => {
   };
 
   const handleRegister = async () => {
+    if (!isChecked) {
+      Alert.alert("Error", "You must agree to the terms of service.");
+      return;
+    }
+
     if (!matchesPasswords()) {
       return;
     }
+
     await sendEmailConfirmation();
   };
 
@@ -132,7 +146,22 @@ const RegisterScreen = () => {
             value={passwordConfirmation}
             onChangeText={setPasswordConfirmation}
           />
+          <View style={styles.tosContainer}>
+            <Checkbox
+              style={styles.checkbox}
+              value={isChecked}
+              onValueChange={handleAgreementToTermsOfService}
+            />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("LegalNoticeScreen")}
+              style={styles.tosButton}
+            >
+              <Text style={styles.tosText}>Read our Terms of Service Here</Text>
+            </TouchableOpacity>
+          </View>
+
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
@@ -211,6 +240,27 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     marginBottom: 10,
+  },
+  tosContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 15, // Adds spacing above and below
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    marginRight: 10, // Adds spacing between checkbox and text
+  },
+  tosButton: {
+    flexShrink: 1, // Ensures the text wraps properly if needed
+    textAlign: "left",
+  },
+  tosText: {
+    fontSize: 16,
+    color: "#4CAF50", // Matches your primary color
+    textDecorationLine: "underline", // Adds emphasis to the TOS link
   },
 });
 
