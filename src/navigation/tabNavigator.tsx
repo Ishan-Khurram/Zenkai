@@ -158,6 +158,7 @@ const MainTabs = () => {
             }
           },
           tabBarActiveTintColor: "#42f44b",
+          tabBarLabel: route.name === "AddActivity" ? "" : undefined,
           tabBarInactiveTintColor: "gray",
         })}
       >

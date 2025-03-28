@@ -133,25 +133,42 @@ export default function RunFolderData({ route }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {groupedRuns.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.dateSection}>
-            <Text style={styles.dateText}>Date: {group.date}</Text>
-            {group.runs.map((run, runIndex) => (
-              <View key={runIndex} style={styles.runContainer}>
-                <Text style={styles.runName}>{run.name}</Text>
-                <View style={styles.runDetailContainer}>
-                  <Text style={styles.detailKey}>Distance:</Text>
-                  <Text style={styles.detailValue}>{run.distance} km</Text>
+            <Text style={styles.dateText}>{group.date}</Text>
+            {group.runs.map((run) => (
+              <View style={styles.statsContainer}>
+                {/* Top Left */}
+                <View style={styles.topLeft}>
+                  <Text style={styles.statsLabel}>Distance</Text>
+                  <Text style={styles.statsValue}>{run.distance} km</Text>
                 </View>
-                <View style={styles.runDetailContainer}>
-                  <Text style={styles.detailKey}>Pace:</Text>
-                  <Text style={styles.detailValue}>{run.pace} min/km</Text>
+
+                {/* Top Right */}
+                <View style={styles.topRight}>
+                  <Text style={styles.statsLabel}>Avg Pace</Text>
+                  <Text style={styles.statsValue}>{run.pace} / km</Text>
                 </View>
-                <View style={styles.runDetailContainer}>
-                  <Text style={styles.detailKey}>Duration:</Text>
-                  <Text style={styles.detailValue}>{run.duration}</Text>
+
+                {/* Bottom Left */}
+                <View style={styles.bottomLeft}>
+                  <Text style={styles.statsLabel}>Moving Time</Text>
+                  <Text style={styles.statsValue}>{run.duration}</Text>
                 </View>
-                {run.notes ? (
-                  <Text style={styles.runNotes}>Notes: {run.notes}</Text>
-                ) : null}
+
+                {/* Bottom Right */}
+                <View style={styles.bottomRight}>
+                  <Text style={styles.statsLabel}>Heart Rate</Text>
+                  {run.heartRate ? (
+                    <Text style={styles.statsValue}>{run.heartRate} bpm</Text>
+                  ) : (
+                    <Text style={styles.statsValue}>N/A</Text>
+                  )}
+                </View>
+                {/* Notes */}
+                <View>
+                  {run.notes ? (
+                    <Text style={styles.runNotes}>Notes: {run.notes}</Text>
+                  ) : null}
+                </View>
               </View>
             ))}
           </View>
@@ -234,48 +251,47 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#1f2937",
   },
-  runContainer: {
-    marginBottom: 15,
-    padding: 15,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  runName: {
-    fontSize: 20, // Make it larger than other fonts
-    fontWeight: "bold",
-    color: "#1f2937",
-    textAlign: "center", // Center the text horizontally
-    marginBottom: 10, // Add spacing xbelow the title
-  },
-  runDetailContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  runDetail: {
-    fontSize: 14,
-    color: "#4b5563",
-  },
-  detailKey: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#111827",
-  },
-  detailValue: {
-    fontSize: 14,
-    color: "#111827",
-  },
   runNotes: {
     fontSize: 14,
     fontStyle: "italic",
     color: "#6b7280",
-    marginTop: 10,
+    marginTop: 20,
+  },
+  statsContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap", // Allows 2x2 layout
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    marginBottom: 20, // Adds spacing before the runs section
+  },
+  statsLabel: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#777",
+  },
+  statsValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  topLeft: {
+    width: "45%",
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  topRight: {
+    width: "45%",
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  bottomLeft: {
+    width: "45%",
+    alignItems: "center",
+  },
+  bottomRight: {
+    width: "45%",
+    alignItems: "center",
   },
 });

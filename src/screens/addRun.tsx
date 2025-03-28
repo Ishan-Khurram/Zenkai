@@ -29,6 +29,7 @@ const AddRun = () => {
   const [distance, setDistance] = useState("");
   const [pace, setPace] = useState("");
   const [duration, setDuration] = useState("");
+  const [heartRate, setHeartRate] = useState("");
   const [notes, setNotes] = useState("");
 
   const auth = getAuth();
@@ -86,6 +87,7 @@ const AddRun = () => {
       distance: parseFloat(distance),
       pace,
       duration,
+      heartRate,
       notes,
     };
 
@@ -181,6 +183,13 @@ const AddRun = () => {
               placeholder="Duration (e.g., 1:00:00)"
               value={duration}
               onChangeText={setDuration}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Heart Rate (optional)"
+              keyboardType="numeric"
+              value={heartRate}
+              onChangeText={setHeartRate}
             />
             <TextInput
               style={styles.input}
