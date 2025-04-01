@@ -5,13 +5,11 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   Alert,
 } from "react-native";
 import { getAuth } from "firebase/auth";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, deleteDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
-import { deleteDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 export default function RunFolderData({ route }) {
@@ -59,20 +57,16 @@ export default function RunFolderData({ route }) {
         }
       });
 
-      // Clean up the listener when the component unmounts or the folder changes
       return () => unsubscribe();
     }
   }, [userId, folderId]);
 
-  // function to delete folder.
   const deleteCurrentFolder = async () => {
     try {
-      // Ensure folderId and userId are defined
       if (!folderId || !userId) {
         throw new Error("Folder ID or User ID is not available.");
       }
 
-      // Create a reference to the document
       const folderRef = doc(
         FIREBASE_DB,
         "users",
@@ -81,7 +75,6 @@ export default function RunFolderData({ route }) {
         folderId
       );
 
-      // Show a confirmation alert
       Alert.alert(
         "Confirm Deletion",
         "This action cannot be undone. Are you sure you want to delete this folder?",
@@ -95,9 +88,9 @@ export default function RunFolderData({ route }) {
             text: "Delete",
             onPress: async () => {
               try {
-                // Delete the document
                 await deleteDoc(folderRef);
                 console.log("Folder deleted successfully.");
+                navigation.goBack();
               } catch (error) {
                 console.error("Error deleting folder: ", error);
               }
@@ -113,7 +106,6 @@ export default function RunFolderData({ route }) {
 
   return (
     <View style={styles.container}>
-      {/* Header with Back Button */}
       <View style={styles.headerContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -122,7 +114,7 @@ export default function RunFolderData({ route }) {
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => deleteCurrentFolder()}
+          onPress={deleteCurrentFolder}
           style={styles.deleteButton}
         >
           <Text>🗑</Text>
@@ -134,41 +126,33 @@ export default function RunFolderData({ route }) {
         {groupedRuns.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.dateSection}>
             <Text style={styles.dateText}>{group.date}</Text>
-            {group.runs.map((run) => (
-              <View style={styles.statsContainer}>
-                {/* Top Left */}
-                <View style={styles.topLeft}>
+            {group.runs.map((run, index) => (
+              <View key={index} style={styles.statsContainer}>
+                <View style={styles.statBlock}>
                   <Text style={styles.statsLabel}>Distance</Text>
                   <Text style={styles.statsValue}>{run.distance} km</Text>
                 </View>
 
-                {/* Top Right */}
-                <View style={styles.topRight}>
-                  <Text style={styles.statsLabel}>Avg Pace</Text>
+                <View style={styles.statBlock}>
+                  <Text style={styles.statsLabel}>Pace</Text>
                   <Text style={styles.statsValue}>{run.pace} / km</Text>
                 </View>
 
-                {/* Bottom Left */}
-                <View style={styles.bottomLeft}>
-                  <Text style={styles.statsLabel}>Moving Time</Text>
+                <View style={styles.statBlock}>
+                  <Text style={styles.statsLabel}>Duration</Text>
                   <Text style={styles.statsValue}>{run.duration}</Text>
                 </View>
 
-                {/* Bottom Right */}
-                <View style={styles.bottomRight}>
+                <View style={styles.statBlock}>
                   <Text style={styles.statsLabel}>Heart Rate</Text>
-                  {run.heartRate ? (
-                    <Text style={styles.statsValue}>{run.heartRate} bpm</Text>
-                  ) : (
-                    <Text style={styles.statsValue}>N/A</Text>
-                  )}
+                  <Text style={styles.statsValue}>
+                    {run.heartRate ? `${run.heartRate} bpm` : "N/A"}
+                  </Text>
                 </View>
-                {/* Notes */}
-                <View>
-                  {run.notes ? (
-                    <Text style={styles.runNotes}>Notes: {run.notes}</Text>
-                  ) : null}
-                </View>
+
+                {run.notes ? (
+                  <Text style={styles.runNotes}>📝 {run.notes}</Text>
+                ) : null}
               </View>
             ))}
           </View>
@@ -251,47 +235,40 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#1f2937",
   },
-  runNotes: {
-    fontSize: 14,
-    fontStyle: "italic",
-    color: "#6b7280",
-    marginTop: 20,
-  },
   statsContainer: {
-    flex: 1,
     flexDirection: "row",
-    flexWrap: "wrap", // Allows 2x2 layout
+    flexWrap: "wrap",
     justifyContent: "space-between",
+  },
+  statBlock: {
+    width: "48%",
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
     alignItems: "center",
-    paddingHorizontal: 10,
-    marginBottom: 20, // Adds spacing before the runs section
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 1,
+    elevation: 1,
   },
   statsLabel: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#777",
+    fontSize: 14,
+    color: "#888",
+    marginBottom: 4,
   },
   statsValue: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#000",
   },
-  topLeft: {
-    width: "45%",
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  topRight: {
-    width: "45%",
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  bottomLeft: {
-    width: "45%",
-    alignItems: "center",
-  },
-  bottomRight: {
-    width: "45%",
-    alignItems: "center",
+  runNotes: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 10,
+    fontStyle: "italic",
+    paddingHorizontal: 5,
   },
 });

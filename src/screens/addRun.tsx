@@ -27,8 +27,11 @@ const AddRun = () => {
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [name, setName] = useState("");
   const [distance, setDistance] = useState("");
-  const [pace, setPace] = useState("");
-  const [duration, setDuration] = useState("");
+  const [paceMins, setPaceMins] = useState("");
+  const [paceSecs, setPaceSecs] = useState("");
+  const [hours, setHours] = useState("");
+  const [minutes, setMinutes] = useState("");
+  const [seconds, setSeconds] = useState("");
   const [heartRate, setHeartRate] = useState("");
   const [notes, setNotes] = useState("");
 
@@ -71,7 +74,12 @@ const AddRun = () => {
       return;
     }
 
-    if (!name || !distance || !pace || !duration) {
+    if (
+      !name ||
+      !distance ||
+      (!paceMins && !paceSecs) ||
+      (!hours && !minutes && !seconds)
+    ) {
       Alert.alert(
         "Missing Information",
         "Please fill out all required fields."
@@ -80,13 +88,17 @@ const AddRun = () => {
     }
 
     const today = format(new Date(), "yyyy-MM-dd");
+    const formattedDuration = `${hours || "0"}:${minutes || "00"}:${
+      seconds || "00"
+    }`;
+    const pace = `${paceMins || "0"}:${paceSecs || "00"}`;
 
     const runData = {
       date: today,
       name,
       distance: parseFloat(distance),
       pace,
-      duration,
+      duration: formattedDuration,
       heartRate,
       notes,
     };
@@ -106,8 +118,12 @@ const AddRun = () => {
 
       setName("");
       setDistance("");
-      setPace("");
-      setDuration("");
+      setPaceMins("");
+      setPaceSecs("");
+      setHours("");
+      setMinutes("");
+      setSeconds("");
+      setHeartRate("");
       setNotes("");
       setSelectedFolder(null);
     } catch (error) {
@@ -172,18 +188,70 @@ const AddRun = () => {
               value={distance}
               onChangeText={setDistance}
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Pace (e.g., 5:15 per km)"
-              value={pace}
-              onChangeText={setPace}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Duration (e.g., 1:00:00)"
-              value={duration}
-              onChangeText={setDuration}
-            />
+
+            {/* Pace Section */}
+            <View style={styles.durationContainer}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.subLabel}>Minutes</Text>
+                <TextInput
+                  style={styles.durationInput}
+                  placeholder="0"
+                  keyboardType="numeric"
+                  value={paceMins}
+                  onChangeText={setPaceMins}
+                  maxLength={2}
+                />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.subLabel}>Seconds</Text>
+                <TextInput
+                  style={styles.durationInput}
+                  placeholder="00"
+                  keyboardType="numeric"
+                  value={paceSecs}
+                  onChangeText={setPaceSecs}
+                  maxLength={2}
+                />
+              </View>
+            </View>
+
+            {/* Duration Section */}
+            <View style={styles.durationContainer}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.subLabel}>Hours</Text>
+                <TextInput
+                  style={styles.durationInput}
+                  placeholder="0"
+                  keyboardType="numeric"
+                  value={hours}
+                  onChangeText={setHours}
+                  maxLength={2}
+                />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.subLabel}>Minutes</Text>
+                <TextInput
+                  style={styles.durationInput}
+                  placeholder="00"
+                  keyboardType="numeric"
+                  value={minutes}
+                  onChangeText={setMinutes}
+                  maxLength={2}
+                />
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.subLabel}>Seconds</Text>
+                <TextInput
+                  style={styles.durationInput}
+                  placeholder="00"
+                  keyboardType="numeric"
+                  value={seconds}
+                  onChangeText={setSeconds}
+                  maxLength={2}
+                />
+              </View>
+            </View>
+
             <TextInput
               style={styles.input}
               placeholder="Heart Rate (optional)"
@@ -261,6 +329,13 @@ const styles = StyleSheet.create({
     color: "#333",
     width: "100%",
   },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    alignSelf: "flex-start",
+    marginBottom: 6,
+    color: "#555",
+  },
   button: {
     backgroundColor: "#4CAF50",
     paddingVertical: 15,
@@ -293,6 +368,33 @@ const styles = StyleSheet.create({
     color: "#aaa",
     textAlign: "center",
     marginTop: 20,
+  },
+  durationContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+    width: "100%",
+    gap: 10,
+  },
+  inputGroup: {
+    flex: 1,
+    alignItems: "center",
+  },
+  durationInput: {
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    textAlign: "center",
+    width: "100%",
+  },
+  subLabel: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 4,
   },
 });
 
