@@ -5,7 +5,6 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
 } from "react-native";
 import { Alert } from "react-native";
 import { getAuth } from "firebase/auth";
@@ -64,15 +63,12 @@ export default function FolderDetail({ route }) {
     if (userId && folderId) fetchExercises();
   }, [userId, folderId]);
 
-  // function to delete folder.
   const deleteCurrentFolder = async () => {
     try {
-      // Ensure folderId and userId are defined
       if (!folderId || !userId) {
         throw new Error("Folder ID or User ID is not available.");
       }
 
-      // Create a reference to the document
       const folderRef = doc(
         FIREBASE_DB,
         "users",
@@ -81,7 +77,6 @@ export default function FolderDetail({ route }) {
         folderId
       );
 
-      // Show a confirmation alert
       Alert.alert(
         "Confirm Deletion",
         "This action cannot be undone. Are you sure you want to delete this folder?",
@@ -95,7 +90,6 @@ export default function FolderDetail({ route }) {
             text: "Delete",
             onPress: async () => {
               try {
-                // Delete the document
                 await deleteDoc(folderRef);
                 console.log("Folder deleted successfully.");
               } catch (error) {
@@ -132,25 +126,27 @@ export default function FolderDetail({ route }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {groupedExercises.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.dateSection}>
-            <Text style={styles.dateText}>Date: {group.date}</Text>
+            <Text style={styles.dateText}>{group.date}</Text>
             {group.exercises.map((exercise, exerciseIndex) => (
               <View key={exerciseIndex} style={styles.exerciseContainer}>
                 <Text style={styles.exerciseName}>{exercise.name}</Text>
                 {exercise.sets?.length ? (
-                  <View style={styles.setsContainer}>
+                  <View style={styles.setsGrid}>
                     {exercise.sets.map((set, setIndex) => (
-                      <View key={setIndex} style={styles.setDetails}>
-                        <Text style={styles.setInfoTitle}>
-                          Set {setIndex + 1}
-                        </Text>
-                        <Text style={styles.detailValue}>
-                          Weight: {set.weight}
-                        </Text>
-                        <Text style={styles.detailValue}>Reps: {set.reps}</Text>
+                      <View key={setIndex} style={styles.setCard}>
+                        <Text style={styles.setTitle}>Set {setIndex + 1}</Text>
+                        <View style={styles.row}>
+                          <View style={styles.statBlock}>
+                            <Text style={styles.statLabel}>Weight</Text>
+                            <Text style={styles.statValue}>{set.weight}</Text>
+                          </View>
+                          <View style={styles.statBlock}>
+                            <Text style={styles.statLabel}>Reps</Text>
+                            <Text style={styles.statValue}>{set.reps}</Text>
+                          </View>
+                        </View>
                         {set.notes ? (
-                          <Text style={styles.notesValue}>
-                            Notes: {set.notes}
-                          </Text>
+                          <Text style={styles.notesText}>📝 {set.notes}</Text>
                         ) : null}
                       </View>
                     ))}
@@ -172,14 +168,14 @@ export default function FolderDetail({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#1E1F22",
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "flex-start",
     paddingBottom: 10,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     height: "18%",
@@ -188,13 +184,13 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingVertical: 20,
     paddingHorizontal: 10,
-    backgroundColor: "white",
+    backgroundColor: "#1E1F22",
   },
   backButton: {
     position: "absolute",
     top: 60,
     left: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#3A3B3C",
     borderRadius: 20,
     width: 80,
     height: 40,
@@ -204,13 +200,13 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
   },
   deleteButton: {
     position: "absolute",
     top: 60,
     right: 15,
-    backgroundColor: "red",
+    backgroundColor: "#D93025",
     borderRadius: 20,
     width: 80,
     height: 40,
@@ -220,67 +216,85 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
     flex: 1,
     textAlign: "center",
   },
   dateSection: {
     marginBottom: 20,
     padding: 15,
-    backgroundColor: "#e0f7fa",
+    backgroundColor: "#2B2D31",
     borderRadius: 10,
   },
   dateText: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#FFFFFF",
   },
   exerciseContainer: {
     marginBottom: 15,
     padding: 15,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#1E1F22",
     borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: "#3A3B3C",
   },
   exerciseName: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#FFFFFF",
   },
-  setsContainer: {
-    marginTop: 10,
+  setsGrid: {
+    flexDirection: "column",
+    gap: 10,
   },
-  setDetails: {
-    marginBottom: 10,
-    padding: 10,
-    backgroundColor: "#fff",
-    borderRadius: 8,
+  setCard: {
+    backgroundColor: "#2B2D31",
+    borderRadius: 10,
+    padding: 12,
+    borderColor: "#3A3B3C",
     borderWidth: 1,
-    borderColor: "#ddd",
   },
-  setInfoTitle: {
+  setTitle: {
+    color: "#B0B3B8",
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  statBlock: {
+    width: "48%",
+    alignItems: "center",
+    backgroundColor: "#1E1F22",
+    padding: 10,
+    borderRadius: 6,
+    borderColor: "#3A3B3C",
+    borderWidth: 1,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: "#B0B3B8",
+  },
+  statValue: {
+    fontSize: 16,
     fontWeight: "bold",
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 5,
+    color: "#FFFFFF",
   },
-  detailValue: {
-    fontSize: 14,
-    color: "#333",
-  },
-  notesValue: {
-    fontSize: 14,
+  notesText: {
+    marginTop: 8,
+    fontSize: 13,
     fontStyle: "italic",
-    color: "#555",
+    color: "#B0B3B8",
   },
   noSetsText: {
     fontSize: 14,
-    color: "#999",
+    color: "#999999",
     fontStyle: "italic",
   },
 });

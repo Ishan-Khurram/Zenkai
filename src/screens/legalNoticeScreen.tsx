@@ -83,7 +83,7 @@ const LegalNoticeScreen: React.FC = () => {
         <Text style={styles.heading}>4. Limitation of Liability</Text>
         <Text style={styles.body}>
           - To the fullest extent permitted by law, our liability is limited to
-          the amount you have paid to use the app (if any) or $0.
+          $0, regardless of any payments made or services rendered.
         </Text>
         <Text style={styles.heading}>5. Termination</Text>
         <Text style={styles.body}>
@@ -116,18 +116,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#1E1F22", // Dark background
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 8,
+    color: "#FFFFFF",
   },
   subtitle: {
     fontSize: 14,
     textAlign: "center",
-    color: "gray",
+    color: "#B0B3B8", // Muted gray
     marginBottom: 16,
   },
   section: {
@@ -137,21 +138,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 8,
+    color: "#FFFFFF",
   },
   heading: {
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 8,
+    color: "#FFFFFF",
   },
   body: {
     fontSize: 14,
     lineHeight: 20,
-    color: "#333",
+    color: "#D1D2D3", // Softer white for body text
   },
   contactTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
+    color: "#FFFFFF",
   },
 });
 

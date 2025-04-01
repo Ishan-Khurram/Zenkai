@@ -89,40 +89,40 @@ export default function Runs() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#1E1F22", // Dark background
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31",
     borderRadius: 20,
     height: "20%",
   },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
   },
   scrollContainer: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: "white",
+    backgroundColor: "#1E1F22",
   },
   button: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#5865F2", // Updated from #007bff (bright blue) to soft blurple
     borderRadius: 5,
     alignItems: "center",
     paddingVertical: 15,
     marginVertical: 10,
   },
   folderText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 18,
   },
   addFolderButton: {
-    backgroundColor: "#04AA6D",
+    backgroundColor: "#43B581", // Soothing green for floating button
     width: 50,
     height: 50,
     borderRadius: 25,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "bold",
   },

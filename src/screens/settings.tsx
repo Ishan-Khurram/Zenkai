@@ -78,14 +78,14 @@ export default function SettingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#1E1F22", // Main dark background
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31", // Dark header section
     borderRadius: 20,
     height: "20%",
   },
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     lineHeight: 32,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF", // Clean white header text
   },
   image: {
     top: "10%",
@@ -110,14 +110,14 @@ const styles = StyleSheet.create({
     fontSize: 32,
     lineHeight: 32,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF", // Match with dark theme
   },
   bodyContainer: {
     flexDirection: "column",
     alignItems: "stretch",
     paddingHorizontal: 5,
     paddingVertical: 5,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31", // Card-style section
     margin: 20,
     borderRadius: 20,
   },
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: "#000",
+    color: "#FFFFFF", // White button text for clarity
   },
   separator: {
     height: 1,
-    backgroundColor: "#ccc",
+    backgroundColor: "#3A3B3C", // Soft divider line
     width: "80%",
     alignSelf: "center",
   },

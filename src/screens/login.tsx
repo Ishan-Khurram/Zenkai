@@ -150,43 +150,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f2f5fa",
+    backgroundColor: "#1E1F22", // Dark background
     alignItems: "center",
   },
   title: {
     fontSize: 32,
     marginVertical: 30,
     fontWeight: "bold",
+    color: "#FFFFFF", // White title text
   },
   input: {
     width: "90%",
     height: 50,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderColor: "#ccc",
+    borderColor: "#3A3B3C", // Slightly lighter border
     borderWidth: 1,
     borderRadius: 10,
     marginTop: 15,
     fontSize: 18,
+    color: "#FFFFFF",
+    backgroundColor: "#2B2D31", // Input field color
   },
   button: {
     width: "90%",
-    backgroundColor: "#4285F4",
+    backgroundColor: "#5865F2", // Discord blue
     padding: 15,
     borderRadius: 10,
     marginTop: 25,
     alignItems: "center",
   },
   registerButton: {
-    backgroundColor: "#34A853",
+    backgroundColor: "#43B581", // Soft green for register
     marginTop: 15,
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 18,
+    fontWeight: "bold",
   },
   errorText: {
-    color: "red",
+    color: "#FF5C5C", // Softer red
     marginTop: 10,
   },
 });

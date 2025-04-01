@@ -113,23 +113,6 @@ const MainTabs = () => {
         />
       )}
 
-      {/* AddWeight Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={weightModalVisible}
-        onRequestClose={() => setWeightModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <AddWeight
-              visible={true}
-              onClose={() => setWeightModalVisible(false)}
-            />
-          </View>
-        </View>
-      </Modal>
-
       {/* Bottom Tab Navigator */}
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -259,7 +242,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "40%",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#2B2D31",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     justifyContent: "space-between",
@@ -273,6 +256,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "white",
   },
   button: {
     backgroundColor: "#42f44b",

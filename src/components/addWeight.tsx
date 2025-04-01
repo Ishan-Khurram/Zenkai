@@ -92,6 +92,7 @@ const AddWeight = ({ visible, onClose }) => {
         <TextInput
           style={styles.input}
           placeholder="Date (YYYY-MM-DD)"
+          placeholderTextColor="#FFFFFF"
           value={date}
           onChangeText={(text) => setDate(formatDate(text))}
           keyboardType="numeric"
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     width: "80%",
     maxWidth: 400,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#1E1F22",
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -135,14 +136,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: "#FFFFFF",
   },
   input: {
     width: "100%",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#3A3B3C",
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#2B2D31",
+    color: "#FFFFFF",
   },
 });

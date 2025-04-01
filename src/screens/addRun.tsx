@@ -133,159 +133,170 @@ const AddRun = () => {
   };
 
   return (
-    <>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            if (selectedFolder) {
-              setSelectedFolder(null);
-            } else {
-              navigation.goBack();
-            }
-          }}
-          style={styles.backButton}
+    <View style={{ flex: 1, backgroundColor: "#1E1F22" }}>
+      <>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              if (selectedFolder) {
+                setSelectedFolder(null);
+              } else {
+                navigation.goBack();
+              }
+            }}
+            style={styles.backButton}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerText}>
+            {!selectedFolder
+              ? "Select a Workout Folder"
+              : `Add Run to ${selectedFolder.name}`}
+          </Text>
+        </View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerText}>
-          {!selectedFolder
-            ? "Select a Workout Folder"
-            : `Add Run to ${selectedFolder.name}`}
-        </Text>
-      </View>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        {!selectedFolder ? (
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            {folders.length > 0 ? (
-              folders.map((folder, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.folderButton}
-                  onPress={() => handleSelectFolder(folder)}
-                >
-                  <Text style={styles.folderButtonText}>{folder.name}</Text>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <Text style={styles.noFoldersText}>No folders available.</Text>
-            )}
-          </ScrollView>
-        ) : (
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            <TextInput
-              style={styles.input}
-              placeholder="Run Name"
-              value={name}
-              onChangeText={setName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Distance (km)"
-              keyboardType="numeric"
-              value={distance}
-              onChangeText={setDistance}
-            />
+          {!selectedFolder ? (
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+              {folders.length > 0 ? (
+                folders.map((folder, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.folderButton}
+                    onPress={() => handleSelectFolder(folder)}
+                  >
+                    <Text style={styles.folderButtonText}>{folder.name}</Text>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <Text style={styles.noFoldersText}>No folders available.</Text>
+              )}
+            </ScrollView>
+          ) : (
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+              <TextInput
+                style={styles.input}
+                placeholder="Run Name"
+                placeholderTextColor="#ffffff"
+                value={name}
+                onChangeText={setName}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Distance (km)"
+                placeholderTextColor="#ffffff"
+                keyboardType="numeric"
+                value={distance}
+                onChangeText={setDistance}
+              />
 
-            {/* Pace Section */}
-            <View style={styles.durationContainer}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.subLabel}>Minutes</Text>
-                <TextInput
-                  style={styles.durationInput}
-                  placeholder="0"
-                  keyboardType="numeric"
-                  value={paceMins}
-                  onChangeText={setPaceMins}
-                  maxLength={2}
-                />
+              {/* Pace Section */}
+              <View style={styles.durationContainer}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.subLabel}>Minutes</Text>
+                  <TextInput
+                    style={styles.durationInput}
+                    placeholder="0"
+                    placeholderTextColor="#ffffff"
+                    keyboardType="numeric"
+                    value={paceMins}
+                    onChangeText={setPaceMins}
+                    maxLength={2}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.subLabel}>Seconds</Text>
+                  <TextInput
+                    style={styles.durationInput}
+                    placeholder="00"
+                    placeholderTextColor="#ffffff"
+                    keyboardType="numeric"
+                    value={paceSecs}
+                    onChangeText={setPaceSecs}
+                    maxLength={2}
+                  />
+                </View>
               </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.subLabel}>Seconds</Text>
-                <TextInput
-                  style={styles.durationInput}
-                  placeholder="00"
-                  keyboardType="numeric"
-                  value={paceSecs}
-                  onChangeText={setPaceSecs}
-                  maxLength={2}
-                />
-              </View>
-            </View>
 
-            {/* Duration Section */}
-            <View style={styles.durationContainer}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.subLabel}>Hours</Text>
-                <TextInput
-                  style={styles.durationInput}
-                  placeholder="0"
-                  keyboardType="numeric"
-                  value={hours}
-                  onChangeText={setHours}
-                  maxLength={2}
-                />
+              {/* Duration Section */}
+              <View style={styles.durationContainer}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.subLabel}>Hours</Text>
+                  <TextInput
+                    style={styles.durationInput}
+                    placeholder="0"
+                    placeholderTextColor="#ffffff"
+                    keyboardType="numeric"
+                    value={hours}
+                    onChangeText={setHours}
+                    maxLength={2}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.subLabel}>Minutes</Text>
+                  <TextInput
+                    style={styles.durationInput}
+                    placeholder="00"
+                    placeholderTextColor="#ffffff"
+                    keyboardType="numeric"
+                    value={minutes}
+                    onChangeText={setMinutes}
+                    maxLength={2}
+                  />
+                </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.subLabel}>Seconds</Text>
+                  <TextInput
+                    style={styles.durationInput}
+                    placeholder="00"
+                    placeholderTextColor="#ffffff"
+                    keyboardType="numeric"
+                    value={seconds}
+                    onChangeText={setSeconds}
+                    maxLength={2}
+                  />
+                </View>
               </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.subLabel}>Minutes</Text>
-                <TextInput
-                  style={styles.durationInput}
-                  placeholder="00"
-                  keyboardType="numeric"
-                  value={minutes}
-                  onChangeText={setMinutes}
-                  maxLength={2}
-                />
-              </View>
-              <View style={styles.inputGroup}>
-                <Text style={styles.subLabel}>Seconds</Text>
-                <TextInput
-                  style={styles.durationInput}
-                  placeholder="00"
-                  keyboardType="numeric"
-                  value={seconds}
-                  onChangeText={setSeconds}
-                  maxLength={2}
-                />
-              </View>
-            </View>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Heart Rate (optional)"
-              keyboardType="numeric"
-              value={heartRate}
-              onChangeText={setHeartRate}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Notes (optional)"
-              value={notes}
-              onChangeText={setNotes}
-            />
-            <TouchableOpacity style={styles.button} onPress={handleSaveRun}>
-              <Text style={styles.buttonText}>Save Run</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        )}
-      </KeyboardAvoidingView>
-    </>
+              <TextInput
+                style={styles.input}
+                placeholder="Heart Rate (optional)"
+                placeholderTextColor="#ffffff"
+                keyboardType="numeric"
+                value={heartRate}
+                onChangeText={setHeartRate}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Notes (optional)"
+                placeholderTextColor="#ffffff"
+                value={notes}
+                onChangeText={setNotes}
+              />
+              <TouchableOpacity style={styles.button} onPress={handleSaveRun}>
+                <Text style={styles.buttonText}>Save Run</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          )}
+        </KeyboardAvoidingView>
+      </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#1E1F22", // Dark background
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "flex-start",
     paddingBottom: 10,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31", // Dark header
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     height: "18%",
@@ -294,7 +305,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 60,
     left: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#3A3B3C", // Soft button background
     borderRadius: 20,
     width: 80,
     height: 40,
@@ -304,12 +315,12 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
   },
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
     flex: 1,
     textAlign: "center",
   },
@@ -319,14 +330,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: "#2B2D31",
     borderRadius: 8,
     padding: 15,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#3A3B3C",
     marginBottom: 15,
-    color: "#333",
+    color: "#FFFFFF",
     width: "100%",
   },
   inputLabel: {
@@ -334,10 +345,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     alignSelf: "flex-start",
     marginBottom: 6,
-    color: "#555",
+    color: "#B0B3B8",
   },
   button: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#43B581", // Soft green
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -345,12 +356,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
   folderButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#5865F2", // Discord blue
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -359,13 +370,13 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   folderButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
   noFoldersText: {
     fontSize: 16,
-    color: "#aaa",
+    color: "#B0B3B8",
     textAlign: "center",
     marginTop: 20,
   },
@@ -381,19 +392,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   durationInput: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#2B2D31",
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 10,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#3A3B3C",
     textAlign: "center",
+    color: "#FFFFFF",
     width: "100%",
   },
   subLabel: {
     fontSize: 14,
-    color: "#666",
+    color: "#B0B3B8",
     marginBottom: 4,
   },
 });

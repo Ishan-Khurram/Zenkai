@@ -13,7 +13,7 @@ export default function AddActivity() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#1E1F22",
     alignItems: "center",
     justifyContent: "center",
   },

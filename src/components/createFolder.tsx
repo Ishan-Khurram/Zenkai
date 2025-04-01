@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     width: "80%",
     maxWidth: 400,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#2B2D31",
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+    color: "white",
   },
   input: {
     borderColor: "#ccc",
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
+    color: "white",
   },
   errorText: {
     color: "red",

@@ -120,14 +120,14 @@ export default function Weight() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#1E1F22", // Main dark background
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31", // Darker header
     borderRadius: 20,
     height: "20%",
   },
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     lineHeight: 32,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF", // White for readability
   },
   contentContainer: {
     paddingHorizontal: 10,
@@ -154,9 +154,10 @@ const styles = StyleSheet.create({
   },
   head: {
     height: 40,
-    backgroundColor: "#f1f8ff",
+    backgroundColor: "#3A3B3C", // Subtle table head background
   },
   text: {
     margin: 6,
+    color: "#FFFFFF", // White text for contrast
   },
 });

@@ -195,96 +195,102 @@ const AddLift = () => {
   };
 
   return (
-    <>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            if (selectedFolder) {
-              setSelectedFolder(null); // Reset folder selection
-            } else {
-              navigation.goBack(); // Navigate back if no folder is selected
-            }
-          }}
-          style={styles.backButton}
+    <View style={{ flex: 1, backgroundColor: "#1E1F22" }}>
+      <>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              if (selectedFolder) {
+                setSelectedFolder(null); // Reset folder selection
+              } else {
+                navigation.goBack(); // Navigate back if no folder is selected
+              }
+            }}
+            style={styles.backButton}
+          >
+            <Text style={styles.backButtonText}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerText}>
+            {!selectedFolder
+              ? "Select a Workout Folder"
+              : `Add Workout to ${selectedFolder.name}`}
+          </Text>
+        </View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <Text style={styles.backButtonText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerText}>
-          {!selectedFolder
-            ? "Select a Workout Folder"
-            : `Add Workout to ${selectedFolder.name}`}
-        </Text>
-      </View>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        {!selectedFolder ? (
-          <>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-              {folders.length > 0 ? (
-                folders.map((folder, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.folderButton}
-                    onPress={() => handleSelectFolder(folder)}
-                  >
-                    <Text style={styles.folderButtonText}>{folder.name}</Text>
-                  </TouchableOpacity>
-                ))
-              ) : (
-                <Text style={styles.noFoldersText}>No folders available.</Text>
-              )}
-            </ScrollView>
-          </>
-        ) : (
-          <>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-              <TextInput
-                style={styles.input}
-                placeholder="Exercise Name"
-                value={exerciseName}
-                onChangeText={setExerciseName}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Number of Sets"
-                keyboardType="numeric"
-                value={numSets}
-                onChangeText={handleNumSetsChange}
-              />
-              {renderSetInputs()}
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleAddExercise}
-              >
-                <Text style={styles.buttonText}>Add Exercise</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.saveButton]}
-                onPress={handleSaveWorkout}
-              >
-                <Text style={styles.buttonText}>Save Workout</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </>
-        )}
-      </KeyboardAvoidingView>
-    </>
+          {!selectedFolder ? (
+            <>
+              <ScrollView contentContainerStyle={styles.scrollContent}>
+                {folders.length > 0 ? (
+                  folders.map((folder, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.folderButton}
+                      onPress={() => handleSelectFolder(folder)}
+                    >
+                      <Text style={styles.folderButtonText}>{folder.name}</Text>
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <Text style={styles.noFoldersText}>
+                    No folders available.
+                  </Text>
+                )}
+              </ScrollView>
+            </>
+          ) : (
+            <>
+              <ScrollView contentContainerStyle={styles.scrollContent}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Exercise Name"
+                  placeholderTextColor="#ffffff"
+                  value={exerciseName}
+                  onChangeText={setExerciseName}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Number of Sets"
+                  placeholderTextColor="#ffffff"
+                  keyboardType="numeric"
+                  value={numSets}
+                  onChangeText={handleNumSetsChange}
+                />
+                {renderSetInputs()}
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleAddExercise}
+                >
+                  <Text style={styles.buttonText}>Add Exercise</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.saveButton]}
+                  onPress={handleSaveWorkout}
+                >
+                  <Text style={styles.buttonText}>Save Workout</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </>
+          )}
+        </KeyboardAvoidingView>
+      </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#1E1F22", // Dark base
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "flex-start",
     paddingBottom: 10,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31", // Dark header
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     height: "18%",
@@ -293,7 +299,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 60,
     left: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#3A3B3C",
     borderRadius: 20,
     width: 80,
     height: 40,
@@ -303,17 +309,17 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
   },
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
     flex: 1,
     textAlign: "center",
   },
   header: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#5865F2", // Discord blue for visual pop
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 20,
@@ -333,17 +339,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 15,
-    color: "#333",
+    color: "#FFFFFF",
   },
   input: {
-    backgroundColor: "#fff",
+    backgroundColor: "#2B2D31",
     borderRadius: 8,
     padding: 15,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#3A3B3C",
     marginBottom: 15,
-    color: "#333",
+    color: "#FFFFFF",
     width: "100%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -352,7 +358,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   setContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#2B2D31",
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
@@ -367,10 +373,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#FFFFFF",
   },
   button: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#43B581", // Soft green for main CTA
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -383,15 +389,15 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   saveButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#5865F2", // Match with rest of the UI
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
   folderButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#5865F2",
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -405,13 +411,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   folderButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
   noFoldersText: {
     fontSize: 16,
-    color: "#aaa",
+    color: "#B0B3B8",
     textAlign: "center",
     marginTop: 20,
   },

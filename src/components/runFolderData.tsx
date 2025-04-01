@@ -165,7 +165,7 @@ export default function RunFolderData({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#1E1F22", // main background
   },
   headerContainer: {
     flexDirection: "row",
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: 20,
     paddingBottom: 10,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#2B2D31",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     height: "18%",
@@ -182,13 +182,13 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: "#fafafa",
+    backgroundColor: "#1E1F22",
   },
   backButton: {
     position: "absolute",
     top: 60,
     left: 15,
-    backgroundColor: "#fff",
+    backgroundColor: "#3A3B3C",
     borderRadius: 20,
     width: 80,
     height: 40,
@@ -198,13 +198,13 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
   },
   deleteButton: {
     position: "absolute",
     top: 60,
     right: 15,
-    backgroundColor: "red",
+    backgroundColor: "#B22222",
     borderRadius: 20,
     width: 80,
     height: 40,
@@ -214,14 +214,14 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
     flex: 1,
     textAlign: "center",
   },
   dateSection: {
     marginBottom: 20,
     padding: 15,
-    backgroundColor: "#f7f9fc",
+    backgroundColor: "#2B2D31",
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#1f2937",
+    color: "#FFFFFF",
   },
   statsContainer: {
     flexDirection: "row",
@@ -242,31 +242,28 @@ const styles = StyleSheet.create({
   },
   statBlock: {
     width: "48%",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#1E1F22",
     borderRadius: 8,
     padding: 10,
     marginBottom: 12,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 1,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: "#3A3B3C",
   },
   statsLabel: {
     fontSize: 14,
-    color: "#888",
+    color: "#B0B3B8",
     marginBottom: 4,
   },
   statsValue: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#000",
+    color: "#FFFFFF",
   },
   runNotes: {
     fontSize: 14,
-    color: "#555",
+    color: "#B0B3B8",
     marginTop: 10,
     fontStyle: "italic",
     paddingHorizontal: 5,
