@@ -185,38 +185,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#f2f5fa",
+    backgroundColor: "#1E1F22", // Dark background
     paddingHorizontal: 20,
   },
   title: {
     fontSize: width * 0.07,
     fontWeight: "bold",
-    color: "#4CAF50",
+    color: "#43B581", // Soft green accent
     textAlign: "center",
     marginBottom: height * 0.03,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#2B2D31", // Dark card
     borderRadius: 15,
     padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 5,
   },
   input: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#1E1F22",
     borderRadius: 8,
     padding: 15,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#3A3B3C",
     marginBottom: 15,
-    color: "#333",
+    color: "#fff",
   },
   button: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#43B581",
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -232,35 +232,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   secondaryButtonText: {
-    color: "#4CAF50",
+    color: "#43B581",
     fontSize: 16,
     fontWeight: "bold",
   },
   errorText: {
-    color: "red",
+    color: "#ff5c5c",
     textAlign: "center",
     marginBottom: 10,
   },
   tosContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 15, // Adds spacing above and below
+    marginVertical: 15,
   },
   checkbox: {
     width: 20,
     height: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
-    marginRight: 10, // Adds spacing between checkbox and text
+    borderColor: "#3A3B3C",
+    backgroundColor: "#1E1F22",
+    marginRight: 10,
   },
   tosButton: {
-    flexShrink: 1, // Ensures the text wraps properly if needed
+    flexShrink: 1,
     textAlign: "left",
   },
   tosText: {
     fontSize: 16,
-    color: "#4CAF50", // Matches your primary color
-    textDecorationLine: "underline", // Adds emphasis to the TOS link
+    color: "#43B581",
+    textDecorationLine: "underline",
   },
 });
 

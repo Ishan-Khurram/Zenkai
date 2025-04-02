@@ -117,6 +117,7 @@ const MainTabs = () => {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
+          tabBarStyle: { backgroundColor: "#2B2D31" },
           tabBarIcon: ({ color, size }) => {
             if (route.name === "Runs") {
               return (
@@ -140,9 +141,9 @@ const MainTabs = () => {
               );
             }
           },
-          tabBarActiveTintColor: "#42f44b",
+          tabBarActiveTintColor: "#43B581",
           tabBarLabel: route.name === "AddActivity" ? "" : undefined,
-          tabBarInactiveTintColor: "gray",
+          tabBarInactiveTintColor: "#B0B3B8",
         })}
       >
         <Tab.Screen name="Runs" component={Runs} />
@@ -189,7 +190,16 @@ const TabNavigator: React.FC = () => {
         <Stack.Screen
           name="LegalNoticeScreen"
           component={LegalNoticeScreen}
-          options={{ title: "Privacy Notice and TOS" }}
+          options={{
+            title: "Privacy Notice and TOS",
+            headerStyle: {
+              backgroundColor: "#2B2D31", // Dark header background
+            },
+            headerTintColor: "#FFFFFF", // White text color
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
         />
       </Stack.Navigator>
     );
@@ -197,11 +207,6 @@ const TabNavigator: React.FC = () => {
 
   return (
     <Stack.Navigator>
-      {/* <Stack.Screen
-        name="Privacy Notice and TOS"
-        component={LegalNoticeScreen}
-        options={{ title: "Privacy Notice and TOS" }}
-      /> */}
       <Stack.Screen
         name="MainTabs"
         component={MainTabs}
@@ -259,7 +264,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   button: {
-    backgroundColor: "#42f44b",
+    backgroundColor: "#5865F2",
     padding: 10,
     borderRadius: 5,
     marginTop: 20,
@@ -276,7 +281,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closeButton: {
-    backgroundColor: "#ff5c5c",
+    backgroundColor: "#3A3B3C",
     width: "100%",
     padding: 10,
     alignItems: "center",

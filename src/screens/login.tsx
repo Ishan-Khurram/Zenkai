@@ -115,6 +115,7 @@ export default function SignInScreen({ onSignIn }: SignInScreenProps) {
       <TextInput
         style={styles.input}
         placeholder="Email"
+        placeholderTextColor="#ffffff"
         autoCapitalize="none"
         keyboardType="email-address"
         value={email}
@@ -126,6 +127,7 @@ export default function SignInScreen({ onSignIn }: SignInScreenProps) {
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#ffffff"
         secureTextEntry
         value={password}
         onChangeText={(text) => {

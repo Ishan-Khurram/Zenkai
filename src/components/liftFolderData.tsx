@@ -126,10 +126,12 @@ export default function FolderDetail({ route }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {groupedExercises.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.dateSection}>
-            <Text style={styles.dateText}>{group.date}</Text>
             {group.exercises.map((exercise, exerciseIndex) => (
               <View key={exerciseIndex} style={styles.exerciseContainer}>
-                <Text style={styles.exerciseName}>{exercise.name}</Text>
+                <View style={styles.exerciseHeader}>
+                  <Text style={styles.exerciseName}>{exercise.name}</Text>
+                  <Text style={styles.exerciseDateInline}>{group.date}</Text>
+                </View>
                 {exercise.sets?.length ? (
                   <View style={styles.setsGrid}>
                     {exercise.sets.map((set, setIndex) => (
@@ -226,12 +228,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#2B2D31",
     borderRadius: 10,
   },
-  dateText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#FFFFFF",
-  },
   exerciseContainer: {
     marginBottom: 15,
     padding: 15,
@@ -240,11 +236,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#3A3B3C",
   },
+  exerciseHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
   exerciseName: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 10,
     color: "#FFFFFF",
+  },
+  exerciseDateInline: {
+    fontSize: 14,
+    color: "#B0B3B8",
+    fontStyle: "italic",
   },
   setsGrid: {
     flexDirection: "column",
