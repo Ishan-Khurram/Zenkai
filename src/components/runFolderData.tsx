@@ -104,6 +104,18 @@ export default function RunFolderData({ route }) {
     }
   };
 
+  const formatTime = (value) => value.toString().padStart(2, "0");
+
+  const formatDuration = (duration) => {
+    const [h, m, s] = duration.split(":");
+    return `${formatTime(h)}:${formatTime(m)}:${formatTime(s)}`;
+  };
+
+  const formatPace = (pace) => {
+    const [m, s] = pace.split(":");
+    return `${m}:${formatTime(s)}`;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -135,12 +147,16 @@ export default function RunFolderData({ route }) {
 
                 <View style={styles.statBlock}>
                   <Text style={styles.statsLabel}>Pace</Text>
-                  <Text style={styles.statsValue}>{run.pace} / km</Text>
+                  <Text style={styles.statsValue}>
+                    {formatPace(run.pace)} / km
+                  </Text>
                 </View>
 
                 <View style={styles.statBlock}>
                   <Text style={styles.statsLabel}>Duration</Text>
-                  <Text style={styles.statsValue}>{run.duration}</Text>
+                  <Text style={styles.statsValue}>
+                    {formatDuration(run.duration)}
+                  </Text>
                 </View>
 
                 <View style={styles.statBlock}>
@@ -165,7 +181,7 @@ export default function RunFolderData({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1E1F22", // main background
+    backgroundColor: "#1E1F22",
   },
   headerContainer: {
     flexDirection: "row",
