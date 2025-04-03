@@ -1,63 +1,90 @@
-🏋️‍♂️ Zenkai
+# 🏋️‍♂️ Zenkai
 
-Zenkai is a sleek, hybrid fitness mobile app designed for individuals who are passionate about both lifting and running. It enables users to track workouts, store them in folders, and monitor personal progress. Built with React Native and Firebase, the app prioritizes simplicity, performance, and longevity.
+> **Hybrid training is the ultimate path to health longevity.**  
+> Strength meets endurance in the most powerful, sustainable way to train.  
+> Zenkai champions the hybrid lifestyle — combining lifting and running into a sleek mobile experience built for the modern athlete.
 
-The hybrid way is the optimal way. Combining strength and endurance training is the most sustainable path toward health and performance for the everyday athlete. Zenkai is designed around this philosophy, helping users adopt a lifestyle that promotes long-term vitality and peak fitness.
+---
 
-🧠 Features
+## 🚀 What is Zenkai?
 
-📁 Organized Folders: Create folders to categorize your workouts by type, routine, or phase.
+**Zenkai** is a hybrid fitness app built with **React Native** and **Firebase** that empowers users to track both strength training and running workouts seamlessly.
 
-🏃 Run Tracker: Log distance, pace, duration, heart rate, and notes. Displayed with sleek formatting (e.g., 00:05:05).
+---
 
-🏋️ Lift Logger: Add exercises with sets, reps, weights, and notes. Grouped neatly by session date.
+## 🔑 Key Features
 
-⚖️ Weight History: Track weight entries over time using a simple modal interface.
+### 📁 Organized Workout Folders
+- Create folders by workout type, phase, or goal  
+- Group exercises or runs by date
 
-✨ Dark Mode Aesthetic: The app uses a consistent, brand-friendly dark color palette inspired by Discord's theme (#1E1F22, #2B2D31).
+### 🏃‍♂️ Run Tracker
+- Log distance, pace (`mm:ss` formatting), duration (`hh:mm:ss`)
+- Include heart rate and optional notes
 
-🔒 Secure Login: Firebase Authentication allows users to safely log in and store data.
+### 🏋️‍♀️ Lift Logger
+- Record exercises with sets, reps, weights, and optional notes  
+- Data grouped by workout day for clear history viewing
 
-📂 Tech Stack
+### ⚖️ Weight Tracker
+- Quick modal interface to log weight and track trends over time
 
-Frontend: React Native (with Expo)
+### 🌙 Dark Theme Aesthetic
+- Inspired by Discord colors:
+  - `#1E1F22` (background)
+  - `#2B2D31` (cards)
+  - `#3A3B3C` (buttons/borders)
+  - `#B0B3B8` (text accents)
+  - `#42f44b` (action highlight)
 
-Backend: Firebase Firestore & Firebase Authentication
+### 🔐 Secure Authentication
+- Firebase login ensures user data is private and tied to their account
 
-Design: Custom SCSS-like styling using React Native's StyleSheet
+---
 
-📱 UI Highlights
+## 🛠️ Tech Stack
 
-Rounded headers for folder screens with floating back and delete buttons
+- **Frontend**: React Native (via Expo)
+- **Backend**: Firebase Firestore & Firebase Auth
+- **Design**: Custom `StyleSheet` dark mode components
 
-Modals for quick activity logging (lift, run, weight)
+---
 
-Tabs for Runs, Lifts, Weight, Settings, and Add Activity
+## 📱 User Interface Highlights
 
-Clean inline time formatting (hh:mm:ss) with leading zeros
+- Minimal, bold UI with inline stat displays
+- Floating back/delete buttons on rounded folder headers
+- Consistent modal overlays for all activity inputs
+- Intuitive bottom tab navigation:
 
-✍️ Notes
+  - 🏃 Runs  
+  - 🏋️ Lifts  
+  - ⚖️ Weight  
+  - ⚙️ Settings  
+  - ➕ Add Activity
 
-The app is currently designed for personal use but will be optimized for the App Store
+---
 
-Core principle: Minimalist design, maximal output tracking
+## 🧭 Roadmap
 
-The app name Zenkai draws inspiration from Dragon Ball Z, meaning the harder you train to failure, the better and stronger you become.
+- 📊 Weight progress charts
+- 🔗 Sync with Apple Health / Google Fit / Garmin
+- 📤 Export logs as CSV or PDF
+- 🏆 Social leaderboard + challenge system
 
-🚀 Roadmap
+---
 
-Add graphs for weight tracking
+## 🧬 Branding & Philosophy
 
-Sync with Apple Health, Google Fit, and Garmin Connect
+- **Zenkai** = "Full Recovery" in anime terms — train hard, come back stronger
+- Clean, symbolic app icon for long-term brand recognition
+- Vibrant green CTA theme (`#42f44b`) throughout the app
 
-Export data as CSV or PDF
+---
 
-Integrate community challenges or social progress boards
+## 🤝 Feedback
 
-📸 Branding
+Have suggestions? Found a bug? Want to collaborate?
 
-Zenkai has a clean, brandable logo with hybrid fitness vibes
-
-Color palette consistent across app and logo (#2B2D31, #3A3B3C, #42f44b, #B0B3B8)
-
-Please reach out if you think there is anything I can do to improve the app!
+> **Let’s build a better hybrid experience together.**  
+> Reach out anytime. 💬
