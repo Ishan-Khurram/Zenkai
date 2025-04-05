@@ -2,41 +2,6 @@ PODS:
   - BEMCheckBox (1.4.1)
   - boost (1.84.0)
   - DoubleConversion (1.1.6)
-  - EXConstants (17.0.3):
-    - ExpoModulesCore
-  - Expo (52.0.6):
-    - ExpoModulesCore
-  - ExpoAsset (11.0.1):
-    - ExpoModulesCore
-  - ExpoFileSystem (18.0.3):
-    - ExpoModulesCore
-  - ExpoFont (13.0.1):
-    - ExpoModulesCore
-  - ExpoKeepAwake (14.0.1):
-    - ExpoModulesCore
-  - ExpoModulesCore (2.0.2):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.01.01.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsinspector
-    - React-NativeModulesApple
-    - React-RCTAppDelegate
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - FBLazyVector (0.76.1)
   - Firebase/Auth (11.10.0):
     - Firebase/CoreOnly
@@ -1324,7 +1289,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context (4.12.0):
+  - react-native-safe-area-context (4.14.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1337,8 +1302,8 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-safe-area-context/common (= 4.12.0)
-    - react-native-safe-area-context/fabric (= 4.12.0)
+    - react-native-safe-area-context/common (= 4.14.1)
+    - react-native-safe-area-context/fabric (= 4.14.1)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -1347,7 +1312,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/common (4.12.0):
+  - react-native-safe-area-context/common (4.14.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1368,7 +1333,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/fabric (4.12.0):
+  - react-native-safe-area-context/fabric (4.14.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1682,7 +1647,7 @@ PODS:
   - RNCCheckbox (0.5.17):
     - BEMCheckBox (~> 1.4)
     - React-Core
-  - RNDateTimePicker (8.2.0):
+  - RNDateTimePicker (8.3.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1706,8 +1671,8 @@ PODS:
   - RNFBApp (21.13.0):
     - Firebase/CoreOnly (= 11.10.0)
     - React-Core
-  - RNFBAuth (21.3.0):
-    - Firebase/Auth (<= 11.10.0)
+  - RNFBAuth (21.13.0):
+    - Firebase/Auth (= 11.10.0)
     - React-Core
     - RNFBApp
   - RNScreens (4.0.0):
@@ -1755,7 +1720,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.8.0):
+  - RNSVG (15.11.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1775,9 +1740,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.8.0)
+    - RNSVG/common (= 15.11.2)
     - Yoga
-  - RNSVG/common (15.8.0):
+  - RNSVG/common (15.11.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1804,13 +1769,6 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
-  - EXConstants (from `../node_modules/expo-constants/ios`)
-  - Expo (from `../node_modules/expo`)
-  - ExpoAsset (from `../node_modules/expo-asset/ios`)
-  - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
-  - ExpoFont (from `../node_modules/expo-font/ios`)
-  - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
-  - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
@@ -1903,20 +1861,6 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
-  EXConstants:
-    :path: "../node_modules/expo-constants/ios"
-  Expo:
-    :path: "../node_modules/expo"
-  ExpoAsset:
-    :path: "../node_modules/expo-asset/ios"
-  ExpoFileSystem:
-    :path: "../node_modules/expo-file-system/ios"
-  ExpoFont:
-    :path: "../node_modules/expo-font/ios"
-  ExpoKeepAwake:
-    :path: "../node_modules/expo-keep-awake/ios"
-  ExpoModulesCore:
-    :path: "../node_modules/expo-modules-core"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   fmt:
@@ -2061,13 +2005,6 @@ SPEC CHECKSUMS:
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   boost: 1dca942403ed9342f98334bf4c3621f011aa7946
   DoubleConversion: f16ae600a246532c4020132d54af21d0ddb2a385
-  EXConstants: 277129d9a42ba2cf1fad375e7eaa9939005c60be
-  Expo: 5a2666e5e08b31207e782d304c7934ef9e8ab512
-  ExpoAsset: 6f7a8887cbb9fb39fdb0808e7f6f74ba0e1ae9b6
-  ExpoFileSystem: 7265de9e7b7050c494f92332110818381f832606
-  ExpoFont: 12b0217e42ac97029d0f317f0486039a8508cf52
-  ExpoKeepAwake: 22173f45d767c7d37403fdf48292726901d69ce7
-  ExpoModulesCore: 445eb3c9e130d78b8a3373523c52d97ab6b8f70d
   FBLazyVector: 7075bb12898bc3998fd60f4b7ca422496cc2cdf7
   Firebase: 1fe1c0a7d9aaea32efe01fbea5f0ebd8d70e53a2
   FirebaseAppCheckInterop: f23709c9ce92d810aa53ff4ce12ad3e666a3c7be
@@ -2110,7 +2047,7 @@ SPEC CHECKSUMS:
   React-logger: 7b5b458327a1ff0d7e5a349430d1ed133dcebaa3
   React-Mapbuffer: 863cf40df7afe1a194a430f9485f30e1c6ef5941
   React-microtasksnativemodule: d6ae7d02a66b345794d9d81c038baa7e1931aace
-  react-native-safe-area-context: db6ad47f9354809886d34e349a0809b0580712ea
+  react-native-safe-area-context: ee5c70aeb80909cebc0007f13a1cb44230f8e307
   React-nativeconfig: e0b63af9169593319fb5ca10d051c9a803549a5d
   React-NativeModulesApple: cd21a0c2a4d01a6bfcdb837c11e799df68ab6617
   React-perflogger: 3140b7778984a486db80d4d2aeaa266cae4eb8c7
@@ -2141,14 +2078,14 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   RNCAsyncStorage: 1cfcd2e83cc2741d069ffe5731b6eed61905da53
   RNCCheckbox: 450ce156f3e29e25efa0315c96cfbabe5a39ded1
-  RNDateTimePicker: dd58d8235c3d12d349c043c2d9bcedcbb513f106
+  RNDateTimePicker: 44bbbdd386116376ffd30d14ff9d20df9a3cb537
   RNFBApp: a438a9444c965b4b1053330f8e54217de2075823
-  RNFBAuth: cbaaa0c1aecd8ec7504a833bcc73c12868c60392
+  RNFBAuth: 6293803f7c8c6df475d6cc38e0bb2d3ef7fd8739
   RNScreens: 38ae4d635c0d0adde928780d0fe7ccca5b395660
-  RNSVG: b5087ac7a1b96b793cddb461b0e166e809a114b8
+  RNSVG: 1a20ceaeef28cc2e6d74ba0d31fe19a9860f9bda
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 83048fe4b4ce15018a5e9ccbf0b06bd76fc643d4
 
-PODFILE CHECKSUM: 383844a595c4568f65b19864f449f0aedd00fdb0
+PODFILE CHECKSUM: a07a598319fc10d54f481e8351cec01cc0173fdf
 
 COCOAPODS: 1.16.2
