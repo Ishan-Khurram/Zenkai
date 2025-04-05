@@ -13,8 +13,7 @@ import AddActivity from "@/screens/addActivity";
 import Weight from "@/screens/weight";
 import Settings from "@/screens/settings";
 import SignInScreen from "@/screens/login";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
-
+import { FIREBASE_AUTH } from "firebaseConfig";
 import {
   MaterialCommunityIcons,
   Ionicons,
