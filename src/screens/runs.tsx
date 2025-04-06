@@ -23,18 +23,29 @@ export default function Runs() {
   useEffect(() => {
     if (!userId) return;
 
-    const foldersRef = collection(FIREBASE_DB, "users", userId, "runFolders");
+    try {
+      const foldersRef = collection(FIREBASE_DB, "users", userId, "runFolders");
 
-    const unsubscribe = onSnapshot(foldersRef, (snapshot) => {
-      const updatedFolders = snapshot.docs.map((doc) => ({
-        folderName: doc.data().folderName,
-        folderId: doc.id,
-      }));
-      setFolders(updatedFolders);
-    });
+      const unsubscribe = onSnapshot(
+        foldersRef,
+        (snapshot) => {
+          const updatedFolders = snapshot.docs.map((doc) => ({
+            folderName: doc.data().folderName,
+            folderId: doc.id,
+          }));
+          setFolders(updatedFolders);
+        },
+        (error) => {
+          console.error("Firestore onSnapshot error:", error);
+          // Optionally set a fallback or error state
+          setFolders([]);
+        }
+      );
 
-    // Clean up listener when component unmounts
-    return () => unsubscribe();
+      return () => unsubscribe();
+    } catch (err) {
+      console.error("Unexpected error setting up snapshot:", err);
+    }
   }, [userId]);
 
   // Navigate to FolderDetail
