@@ -2,19 +2,20 @@
   "expo": {
     "name": "Zenkai",
     "slug": "Zenkai",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/ZenkaiAppIcon.png",
+    "icon": "./assets/icon.png",
     "newArchEnabled": true,
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/ZenkaiSplash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.khurram.zenkai"
+      "bundleIdentifier": "com.khurram.zenkai",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
