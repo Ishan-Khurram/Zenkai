@@ -135,9 +135,22 @@ export default function SignInScreen({ onSignIn }: SignInScreenProps) {
           setError("");
         }}
       />
-      <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-        <Text style={styles.buttonText}>Sign In</Text>
-      </TouchableOpacity>
+
+      {/* Horizontal Row for Sign In and Forgot Password */}
+      <View style={styles.rowContainer}>
+        <TouchableOpacity
+          style={styles.halfButton}
+          onPress={() => navigation.navigate("ForgotPassword")}
+        >
+          <Text style={styles.forgotText}>Forgot Password?</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.halfButtonAlt} onPress={handleSignIn}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Full-width Register Button */}
       <TouchableOpacity
         style={[styles.button, styles.registerButton]}
         onPress={() => navigation.navigate("Register")}
@@ -173,6 +186,36 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#FFFFFF",
     backgroundColor: "#2B2D31", // Input field color
+  },
+  rowContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "90%",
+    marginTop: 25,
+  },
+
+  halfButton: {
+    width: "48%",
+    backgroundColor: "#2B2D31", // Match input background
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#5865F2", // Optional accent border
+  },
+
+  halfButtonAlt: {
+    width: "48%",
+    backgroundColor: "#5865F2",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  forgotText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   button: {
     width: "90%",

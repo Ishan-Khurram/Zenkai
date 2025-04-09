@@ -28,6 +28,7 @@ import AddRun from "@/screens/addRun";
 import RunFolderDetail from "@/components/runFolderData";
 import RegisterScreen from "@/screens/register";
 import LegalNoticeScreen from "@/screens/legalNoticeScreen";
+import ForgotPassword from "@/screens/forgotPassword";
 
 type RootStackParamList = {
   MainTabs: undefined;
@@ -185,6 +186,11 @@ const TabNavigator: React.FC = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPassword}
           options={{ headerShown: false }}
         />
         <Stack.Screen

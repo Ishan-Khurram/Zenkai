@@ -9,16 +9,15 @@ import {
   SafeAreaView,
   Button,
   KeyboardAvoidingView,
-  ScrollView,
   Platform,
 } from "react-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { FIREBASE_AUTH } from "firebaseConfig";
 import { sendEmailVerification } from "firebase/auth";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Checkbox from "expo-checkbox";
-import LegalNoticeScreen from "./legalNoticeScreen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -97,83 +96,85 @@ const RegisterScreen = () => {
     await sendEmailConfirmation();
   };
 
-  // Link to tos here. Make it a box the user must click to register, or refresh screen.
-
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={100}
-    >
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.title}>Create Your Account</Text>
-        <View style={styles.card}>
-          <TextInput
-            style={styles.input}
-            placeholder="First Name"
-            placeholderTextColor="#aaa"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Last Name"
-            placeholderTextColor="#aaa"
-            value={lastName}
-            onChangeText={setLastName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-            value={passwordConfirmation}
-            onChangeText={setPasswordConfirmation}
-          />
-          <View style={styles.tosContainer}>
-            <Checkbox
-              style={styles.checkbox}
-              value={isChecked}
-              onValueChange={handleAgreementToTermsOfService}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={100}
+      >
+        <SafeAreaView style={styles.container}>
+          <Text style={styles.title}>Create Your Account</Text>
+          <View style={styles.card}>
+            <TextInput
+              style={styles.input}
+              placeholder="First Name"
+              placeholderTextColor="#aaa"
+              value={firstName}
+              onChangeText={setFirstName}
             />
+            <TextInput
+              style={styles.input}
+              placeholder="Last Name"
+              placeholderTextColor="#aaa"
+              value={lastName}
+              onChangeText={setLastName}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#aaa"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#aaa"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              placeholderTextColor="#aaa"
+              secureTextEntry
+              value={passwordConfirmation}
+              onChangeText={setPasswordConfirmation}
+            />
+            <View style={styles.tosContainer}>
+              <Checkbox
+                style={styles.checkbox}
+                value={isChecked}
+                onValueChange={handleAgreementToTermsOfService}
+              />
+              <TouchableOpacity
+                onPress={() => navigation.navigate("LegalNoticeScreen")}
+                style={styles.tosButton}
+              >
+                <Text style={styles.tosText}>
+                  Read our Terms of Service Here
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+              <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate("LegalNoticeScreen")}
-              style={styles.tosButton}
+              style={styles.secondaryButton}
+              onPress={() => navigation.goBack()}
             >
-              <Text style={styles.tosText}>Read our Terms of Service Here</Text>
+              <Text style={styles.secondaryButtonText}>← Back</Text>
             </TouchableOpacity>
           </View>
-
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-          <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.buttonText}>Register</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.secondaryButtonText}>← Back</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 
