@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 17,
     backgroundColor: "#1E1F22",
   },
   backButton: {

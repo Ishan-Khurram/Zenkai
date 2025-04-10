@@ -4,13 +4,13 @@
     "slug": "Zenkai",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/splash.png",
+    "icon": "./assets/icon.png",
     "newArchEnabled": true,
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/splash.png", // <-- this is your full-screen splash image (2732x2732)
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1E1F22" // match your splash image background
     },
     "ios": {
       "supportsTablet": true,
@@ -19,13 +19,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#1E1F22" // match your icon background if it's transparent
       },
       "package": "com.khurram.zenkai"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png" // optional: reuse your icon here
     },
     "extra": {
       "eas": {

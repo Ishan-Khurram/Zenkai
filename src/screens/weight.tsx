@@ -12,6 +12,7 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { onSnapshot } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { Dimensions } from "react-native";
 
 export default function Weight() {
   const [weightData, setWeightData] = useState([]);
@@ -53,6 +54,11 @@ export default function Weight() {
   const tableHead = ["Date", "Weight"];
   const tableData = weightData.map((item) => [item.date, item.weight]);
 
+  // add scroll functionality once certain number of data points are hit.
+  const screenWidth = Dimensions.get("window").width;
+  const entryCount = weightData.length;
+  const chartWidth = entryCount > 20 ? entryCount * 40 : screenWidth;
+
   return (
     <View style={styles.background}>
       {/* Header */}
@@ -65,15 +71,26 @@ export default function Weight() {
         {/* Chart */}
         <View style={styles.chartContainer}>
           <ScrollView horizontal style={styles.scrollContainer}>
+            {entryCount > 20 && (
+              <Text style={{ color: "#aaa", marginLeft: 10, marginBottom: 5 }}>
+                Scroll → to view full chart
+              </Text>
+            )}
+
             <VictoryChart
               height={600}
-              width={1000}
+              width={chartWidth}
               theme={VictoryTheme.material}
             >
               <VictoryAxis
                 tickValues={weightData.map((d) => d.date)}
                 style={{
-                  tickLabels: { angle: -45, fontSize: 10, padding: 15 },
+                  tickLabels: {
+                    angle: -45,
+                    fontSize: 10,
+                    padding: 15,
+                    fill: "#fff",
+                  },
                 }}
               />
               <VictoryAxis
@@ -81,7 +98,7 @@ export default function Weight() {
                 tickFormat={(t) => `${t} lbs`}
                 tickCount={15}
                 style={{
-                  tickLabels: { fontSize: 12, padding: 5 },
+                  tickLabels: { fontSize: 12, padding: 5, fill: "#fff" },
                 }}
               />
               <VictoryLine

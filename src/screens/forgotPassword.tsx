@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { FIREBASE_AUTH } from "firebaseConfig";
 import { Ionicons } from "@expo/vector-icons";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -38,30 +39,32 @@ export default function ForgotPassword() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="arrow-back" size={28} color="#fff" />
-      </TouchableOpacity>
-      <Text style={styles.title}>Forgot Password?</Text>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your email"
-        placeholderTextColor="#ffffff"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={(text) => {
-          setEmail(text);
-          setError("");
-        }}
-      />
-      <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
-        <Text style={styles.buttonText}>Send Email</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={28} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Forgot Password?</Text>
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email"
+          placeholderTextColor="#ffffff"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={(text) => {
+            setEmail(text);
+            setError("");
+          }}
+        />
+        <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
+          <Text style={styles.buttonText}>Send Email</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
