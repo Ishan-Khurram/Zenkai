@@ -6,15 +6,26 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  TextInput,
 } from "react-native";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, onSnapshot, deleteDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import { updateRunEntry } from "./editFile"; // Adjust path if needed
 
 export default function RunFolderData({ route }) {
   const { folderId, folderName } = route.params;
   const [groupedRuns, setGroupedRuns] = useState([]);
+  const [currentlyEditing, setCurrentlyEditing] = useState({
+    date: null,
+    index: null,
+  });
+  const [editedDistance, setEditedDistance] = useState("");
+  const [editedPace, setEditedPace] = useState("");
+  const [editedDuration, setEditedDuration] = useState("");
+  const [editedHeartRate, setEditedHeartRate] = useState("");
+  const [editedNotes, setEditedNotes] = useState("");
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
   const navigation = useNavigation();
@@ -63,10 +74,8 @@ export default function RunFolderData({ route }) {
 
   const deleteCurrentFolder = async () => {
     try {
-      if (!folderId || !userId) {
+      if (!folderId || !userId)
         throw new Error("Folder ID or User ID is not available.");
-      }
-
       const folderRef = doc(
         FIREBASE_DB,
         "users",
@@ -79,17 +88,12 @@ export default function RunFolderData({ route }) {
         "Confirm Deletion",
         "This action cannot be undone. Are you sure you want to delete this folder?",
         [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Deletion canceled"),
-            style: "cancel",
-          },
+          { text: "Cancel", style: "cancel" },
           {
             text: "Delete",
             onPress: async () => {
               try {
                 await deleteDoc(folderRef);
-                console.log("Folder deleted successfully.");
                 navigation.goBack();
               } catch (error) {
                 console.error("Error deleting folder: ", error);
@@ -105,12 +109,10 @@ export default function RunFolderData({ route }) {
   };
 
   const formatTime = (value) => value.toString().padStart(2, "0");
-
   const formatDuration = (duration) => {
     const [h, m, s] = duration.split(":");
     return `${formatTime(h)}:${formatTime(m)}:${formatTime(s)}`;
   };
-
   const formatPace = (pace) => {
     const [m, s] = pace.split(":");
     return `${m}:${formatTime(s)}`;
@@ -138,39 +140,173 @@ export default function RunFolderData({ route }) {
         {groupedRuns.map((group, groupIndex) => (
           <View key={groupIndex} style={styles.dateSection}>
             <Text style={styles.dateText}>{group.date}</Text>
-            {group.runs.map((run, index) => (
-              <View key={index} style={styles.statsContainer}>
-                <View style={styles.statBlock}>
-                  <Text style={styles.statsLabel}>Distance</Text>
-                  <Text style={styles.statsValue}>{run.distance} km</Text>
-                </View>
 
-                <View style={styles.statBlock}>
-                  <Text style={styles.statsLabel}>Pace</Text>
-                  <Text style={styles.statsValue}>
-                    {formatPace(run.pace)} / km
-                  </Text>
-                </View>
+            {group.runs.map((run, index) => {
+              const isEditing =
+                currentlyEditing.date === group.date &&
+                currentlyEditing.index === index;
 
-                <View style={styles.statBlock}>
-                  <Text style={styles.statsLabel}>Duration</Text>
-                  <Text style={styles.statsValue}>
-                    {formatDuration(run.duration)}
-                  </Text>
-                </View>
+              return (
+                <View key={index} style={styles.statsContainer}>
+                  {/* Distance */}
+                  <View style={styles.statBlock}>
+                    <Text style={styles.statsLabel}>Distance</Text>
+                    {isEditing ? (
+                      <TextInput
+                        value={editedDistance}
+                        onChangeText={setEditedDistance}
+                        style={styles.statsValue}
+                        keyboardType="numeric"
+                      />
+                    ) : (
+                      <Text style={styles.statsValue}>{run.distance} km</Text>
+                    )}
+                  </View>
 
-                <View style={styles.statBlock}>
-                  <Text style={styles.statsLabel}>Heart Rate</Text>
-                  <Text style={styles.statsValue}>
-                    {run.heartRate ? `${run.heartRate} bpm` : "N/A"}
-                  </Text>
-                </View>
+                  {/* Pace */}
+                  <View style={styles.statBlock}>
+                    <Text style={styles.statsLabel}>Pace</Text>
+                    {isEditing ? (
+                      <TextInput
+                        value={editedPace}
+                        onChangeText={setEditedPace}
+                        style={styles.statsValue}
+                      />
+                    ) : (
+                      <Text style={styles.statsValue}>
+                        {formatPace(run.pace)} / km
+                      </Text>
+                    )}
+                  </View>
 
-                {run.notes ? (
-                  <Text style={styles.runNotes}>📝 {run.notes}</Text>
-                ) : null}
-              </View>
-            ))}
+                  {/* Duration */}
+                  <View style={styles.statBlock}>
+                    <Text style={styles.statsLabel}>Duration</Text>
+                    {isEditing ? (
+                      <TextInput
+                        value={editedDuration}
+                        onChangeText={setEditedDuration}
+                        style={styles.statsValue}
+                      />
+                    ) : (
+                      <Text style={styles.statsValue}>
+                        {formatDuration(run.duration)}
+                      </Text>
+                    )}
+                  </View>
+
+                  {/* Heart Rate */}
+                  <View style={styles.statBlock}>
+                    <Text style={styles.statsLabel}>Heart Rate</Text>
+                    {isEditing ? (
+                      <TextInput
+                        value={editedHeartRate}
+                        onChangeText={setEditedHeartRate}
+                        style={styles.statsValue}
+                        keyboardType="numeric"
+                      />
+                    ) : (
+                      <Text style={styles.statsValue}>
+                        {run.heartRate ? `${run.heartRate} bpm` : "N/A"}
+                      </Text>
+                    )}
+                  </View>
+
+                  {/* Notes */}
+                  {isEditing ? (
+                    <TextInput
+                      value={editedNotes}
+                      onChangeText={setEditedNotes}
+                      style={[
+                        styles.runNotes,
+                        { borderWidth: 1, borderColor: "#3A3B3C" },
+                      ]}
+                      placeholder="Notes"
+                      multiline
+                    />
+                  ) : run.notes ? (
+                    <Text style={styles.runNotes}>📝 {run.notes}</Text>
+                  ) : null}
+
+                  {/* Action Buttons */}
+                  <View
+                    style={{ flexDirection: "row", marginTop: 10, gap: 15 }}
+                  >
+                    {isEditing ? (
+                      <>
+                        <TouchableOpacity
+                          onPress={async () => {
+                            // Regex validators
+                            const paceRegex = /^\d{1,2}:\d{2}$/;
+                            const durationRegex = /^\d{1,2}:\d{2}:\d{2}$/;
+
+                            if (!paceRegex.test(editedPace)) {
+                              Alert.alert(
+                                "Invalid Pace Format",
+                                "Pace must be in x:xx or xx:xx format."
+                              );
+                              return;
+                            }
+
+                            if (!durationRegex.test(editedDuration)) {
+                              Alert.alert(
+                                "Invalid Duration Format",
+                                "Duration must be in xx:xx:xx format."
+                              );
+                              return;
+                            }
+
+                            const result = await updateRunEntry({
+                              userId,
+                              folderId,
+                              runDate: group.date,
+                              runIndex: index,
+                              updatedRunData: {
+                                distance: parseFloat(editedDistance),
+                                pace: editedPace,
+                                duration: editedDuration,
+                                heartRate: editedHeartRate
+                                  ? parseInt(editedHeartRate)
+                                  : null,
+                                notes: editedNotes,
+                              },
+                            });
+
+                            if (result.success) {
+                              setCurrentlyEditing({ date: null, index: null });
+                            } else {
+                              Alert.alert("Error", result.message);
+                            }
+                          }}
+                        >
+                          <Text>✅</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            setCurrentlyEditing({ date: null, index: null })
+                          }
+                        >
+                          <Text>❌</Text>
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() => {
+                          setCurrentlyEditing({ date: group.date, index });
+                          setEditedDistance(run.distance.toString());
+                          setEditedPace(run.pace);
+                          setEditedDuration(run.duration);
+                          setEditedHeartRate(run.heartRate?.toString() || "");
+                          setEditedNotes(run.notes || "");
+                        }}
+                      >
+                        <Text>✏️</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              );
+            })}
           </View>
         ))}
       </ScrollView>
@@ -179,10 +315,7 @@ export default function RunFolderData({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1E1F22",
-  },
+  container: { flex: 1, backgroundColor: "#1E1F22" },
   headerContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
