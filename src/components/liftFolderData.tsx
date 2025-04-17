@@ -5,70 +5,76 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { Alert } from "react-native";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import { updateLiftEntry } from "@/components/editLiftFile";
 
 export default function FolderDetail({ route }) {
   const { folderId, folderName } = route.params;
   const [groupedExercises, setGroupedExercises] = useState([]);
+  const [currentlyEditing, setCurrentlyEditing] = useState({
+    date: null,
+    exerciseIndex: null,
+    setIndex: null,
+  });
+  const [editedWeight, setEditedWeight] = useState("");
+  const [editedReps, setEditedReps] = useState("");
+  const [editedNotes, setEditedNotes] = useState("");
   const auth = getAuth();
   const userId = auth.currentUser?.uid;
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const fetchExercises = async () => {
-      try {
-        const folderDocRef = doc(
-          FIREBASE_DB,
-          "users",
-          userId,
-          "liftFolders",
-          folderId
-        );
-        const folderDoc = await getDoc(folderDocRef);
+  const fetchExercises = async () => {
+    try {
+      const folderDocRef = doc(
+        FIREBASE_DB,
+        "users",
+        userId,
+        "liftFolders",
+        folderId
+      );
+      const folderDoc = await getDoc(folderDocRef);
 
-        if (folderDoc.exists()) {
-          const folderData = folderDoc.data();
-          const fetchedExercises = folderData.exercises || [];
+      if (folderDoc.exists()) {
+        const folderData = folderDoc.data();
+        const fetchedExercises = folderData.exercises || [];
 
-          const grouped = fetchedExercises.reduce((acc, exerciseEntry) => {
-            const date = exerciseEntry.date;
-            if (!acc[date]) {
-              acc[date] = [];
-            }
-            acc[date].push(...exerciseEntry.exercises);
-            return acc;
-          }, {});
+        const grouped = fetchedExercises.reduce((acc, exerciseEntry) => {
+          const date = exerciseEntry.date;
+          if (!acc[date]) acc[date] = [];
+          acc[date].push(...exerciseEntry.exercises);
+          return acc;
+        }, {});
 
-          const groupedArray = Object.keys(grouped)
-            .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-            .map((date) => ({
-              date,
-              exercises: grouped[date],
-            }));
+        const groupedArray = Object.keys(grouped)
+          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+          .map((date) => ({
+            date,
+            exercises: grouped[date],
+          }));
 
-          setGroupedExercises(groupedArray);
-        } else {
-          console.log("No such folder document found!");
-        }
-      } catch (error) {
-        console.error("Error fetching exercises:", error);
+        setGroupedExercises(groupedArray);
+      } else {
+        console.log("No such folder document found!");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching exercises:", error);
+    }
+  };
 
+  useEffect(() => {
     if (userId && folderId) fetchExercises();
   }, [userId, folderId]);
 
   const deleteCurrentFolder = async () => {
     try {
-      if (!folderId || !userId) {
+      if (!folderId || !userId)
         throw new Error("Folder ID or User ID is not available.");
-      }
-
       const folderRef = doc(
         FIREBASE_DB,
         "users",
@@ -105,6 +111,51 @@ export default function FolderDetail({ route }) {
     }
   };
 
+  const onSaveEdit = async () => {
+    if (
+      !userId ||
+      !folderId ||
+      currentlyEditing.date === null ||
+      currentlyEditing.exerciseIndex === null ||
+      currentlyEditing.setIndex === null
+    )
+      return;
+
+    const group = groupedExercises.find(
+      (g) => g.date === currentlyEditing.date
+    );
+    if (!group || !group.exercises[currentlyEditing.exerciseIndex]) {
+      console.error("Could not find matching exercise for editing.");
+      return;
+    }
+
+    const originalExercise = group.exercises[currentlyEditing.exerciseIndex];
+    const updatedSets = [...originalExercise.sets];
+    updatedSets[currentlyEditing.setIndex] = {
+      weight: editedWeight,
+      reps: editedReps,
+      notes: editedNotes,
+    };
+
+    const updatedLiftData = {
+      name: originalExercise.name,
+      sets: updatedSets,
+    };
+
+    const res = await updateLiftEntry({
+      userId,
+      folderId,
+      liftDate: currentlyEditing.date,
+      liftIndex: currentlyEditing.exerciseIndex,
+      updatedLiftData,
+    });
+
+    if (res.success) {
+      setCurrentlyEditing({ date: null, exerciseIndex: null, setIndex: null });
+      fetchExercises();
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -115,7 +166,7 @@ export default function FolderDetail({ route }) {
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => deleteCurrentFolder()}
+          onPress={deleteCurrentFolder}
           style={styles.deleteButton}
         >
           <Text>🗑</Text>
@@ -132,24 +183,121 @@ export default function FolderDetail({ route }) {
                   <Text style={styles.exerciseName}>{exercise.name}</Text>
                   <Text style={styles.exerciseDateInline}>{group.date}</Text>
                 </View>
+
                 {exercise.sets?.length ? (
                   <View style={styles.setsGrid}>
                     {exercise.sets.map((set, setIndex) => (
                       <View key={setIndex} style={styles.setCard}>
                         <Text style={styles.setTitle}>Set {setIndex + 1}</Text>
-                        <View style={styles.row}>
-                          <View style={styles.statBlock}>
-                            <Text style={styles.statLabel}>Weight</Text>
-                            <Text style={styles.statValue}>{set.weight}</Text>
-                          </View>
-                          <View style={styles.statBlock}>
-                            <Text style={styles.statLabel}>Reps</Text>
-                            <Text style={styles.statValue}>{set.reps}</Text>
-                          </View>
-                        </View>
-                        {set.notes ? (
-                          <Text style={styles.notesText}>📝 {set.notes}</Text>
-                        ) : null}
+
+                        {currentlyEditing.date === group.date &&
+                        currentlyEditing.exerciseIndex === exerciseIndex &&
+                        currentlyEditing.setIndex === setIndex ? (
+                          <>
+                            <View style={styles.row}>
+                              <View style={styles.statBlock}>
+                                <Text style={styles.statLabel}>Weight</Text>
+                                <TextInput
+                                  value={editedWeight}
+                                  onChangeText={setEditedWeight}
+                                  placeholder="Weight"
+                                  placeholderTextColor="#888"
+                                  style={[styles.statValue, { padding: 0 }]}
+                                />
+                              </View>
+                              <View style={styles.statBlock}>
+                                <Text style={styles.statLabel}>Reps</Text>
+                                <TextInput
+                                  value={editedReps}
+                                  onChangeText={setEditedReps}
+                                  placeholder="Reps"
+                                  placeholderTextColor="#888"
+                                  style={[styles.statValue, { padding: 0 }]}
+                                />
+                              </View>
+                            </View>
+
+                            <TextInput
+                              value={editedNotes}
+                              onChangeText={setEditedNotes}
+                              placeholder="Notes"
+                              placeholderTextColor="#888"
+                              multiline
+                              style={[styles.notesText, { padding: 0 }]}
+                            />
+
+                            <View style={styles.inlineEditButtons}>
+                              <TouchableOpacity onPress={onSaveEdit}>
+                                <Text style={styles.saveIcon}>✅</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() =>
+                                  setCurrentlyEditing({
+                                    date: null,
+                                    exerciseIndex: null,
+                                    setIndex: null,
+                                  })
+                                }
+                              >
+                                <Text style={styles.cancelIcon}>❌</Text>
+                              </TouchableOpacity>
+                            </View>
+                          </>
+                        ) : (
+                          <>
+                            <View style={styles.row}>
+                              <View style={styles.statBlock}>
+                                <Text style={styles.statLabel}>Weight</Text>
+                                <Text style={styles.statValue}>
+                                  {set.weight}
+                                </Text>
+                              </View>
+                              <View style={styles.statBlock}>
+                                <Text style={styles.statLabel}>Reps</Text>
+                                <Text style={styles.statValue}>{set.reps}</Text>
+                              </View>
+                            </View>
+
+                            {set.notes ? (
+                              <View style={styles.notesRow}>
+                                <Text style={[styles.notesText, { flex: 1 }]}>
+                                  📝 {set.notes}
+                                </Text>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    setCurrentlyEditing({
+                                      date: group.date,
+                                      exerciseIndex,
+                                      setIndex,
+                                    });
+                                    setEditedWeight(set.weight.toString());
+                                    setEditedReps(set.reps.toString());
+                                    setEditedNotes(set.notes || "");
+                                  }}
+                                  style={styles.editIcon}
+                                >
+                                  <Text>✏️</Text>
+                                </TouchableOpacity>
+                              </View>
+                            ) : (
+                              <TouchableOpacity
+                                onPress={() => {
+                                  setCurrentlyEditing({
+                                    date: group.date,
+                                    exerciseIndex,
+                                    setIndex,
+                                  });
+                                  setEditedWeight(set.weight.toString());
+                                  setEditedReps(set.reps.toString());
+                                  setEditedNotes(set.notes || "");
+                                }}
+                                style={styles.editAlone}
+                              >
+                                <Text>✏️</Text>
+                              </TouchableOpacity>
+                            )}
+                          </>
+                        )}
                       </View>
                     ))}
                   </View>
@@ -302,5 +450,37 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#999999",
     fontStyle: "italic",
+  },
+  notesRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    justifyContent: "space-between", // pushes ✏️ to the right
+  },
+
+  inlineEditButtons: {
+    flexDirection: "row",
+    alignSelf: "flex-end", // aligns ✅ ❌ to the right side of card
+    marginTop: 8,
+    gap: 15, // adds spacing between save and cancel
+  },
+
+  saveIcon: {
+    color: "#4CAF50", // green
+    fontWeight: "bold",
+  },
+
+  cancelIcon: {
+    color: "#F44336", // red
+    fontWeight: "bold",
+  },
+
+  editIcon: {
+    marginLeft: 10, // spacing from notes
+  },
+
+  editAlone: {
+    alignSelf: "flex-end", // right-align for notes-less cards
+    marginTop: 8,
   },
 });
