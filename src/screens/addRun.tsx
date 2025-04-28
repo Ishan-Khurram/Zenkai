@@ -63,7 +63,37 @@ const AddRun = () => {
     fetchFolders();
   }, [userId]);
 
+  // Automatically calculate elapsed time when distance or pace changes
+  useEffect(() => {
+    elapsedTime();
+  }, [distance, paceMins, paceSecs]);
+
   const handleSelectFolder = (folder) => setSelectedFolder(folder);
+
+  const elapsedTime = () => {
+    if (!distance || (!paceMins && !paceSecs)) {
+      return;
+    }
+
+    // get the needed variables
+    const distanceNum = parseFloat(distance);
+    const paceMinutes = parseInt(paceMins) || 0;
+    const paceSeconds = parseInt(paceSecs) || 0;
+
+    // calculate the total elapsed time using minutes and decimal places
+    const decimalPace = paceMinutes + paceSeconds / 60;
+    const totalMinutes = distanceNum * decimalPace;
+
+    // convert to hh:mm:ss
+    const totalHours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = Math.floor(totalMinutes % 60);
+    const remainingSeconds = Math.round((totalMinutes % 1) * 60);
+
+    // push the data to the proper place.
+    setHours(totalHours.toString());
+    setMinutes(remainingMinutes.toString().padStart(2, "0"));
+    setSeconds(remainingSeconds.toString().padStart(2, "0"));
+  };
 
   const handleSaveRun = async () => {
     if (!selectedFolder) {
@@ -231,6 +261,7 @@ const AddRun = () => {
                     keyboardType="numeric"
                     value={hours}
                     onChangeText={setHours}
+                    editable={false}
                     maxLength={2}
                   />
                 </View>
@@ -243,6 +274,7 @@ const AddRun = () => {
                     keyboardType="numeric"
                     value={minutes}
                     onChangeText={setMinutes}
+                    editable={false}
                     maxLength={2}
                   />
                 </View>
@@ -255,6 +287,7 @@ const AddRun = () => {
                     keyboardType="numeric"
                     value={seconds}
                     onChangeText={setSeconds}
+                    editable={false}
                     maxLength={2}
                   />
                 </View>

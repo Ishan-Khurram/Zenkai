@@ -98,7 +98,7 @@ export default function Weight() {
                 tickFormat={(t) => `${t} lbs`}
                 tickCount={15}
                 style={{
-                  tickLabels: { fontSize: 12, padding: 5, fill: "#fff" },
+                  tickLabels: { fontSize: 12, padding: -5, fill: "#fff" },
                 }}
               />
               <VictoryLine
