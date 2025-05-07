@@ -29,11 +29,13 @@ import RunFolderDetail from "@/components/runFolderData";
 import RegisterScreen from "@/screens/register";
 import LegalNoticeScreen from "@/screens/legalNoticeScreen";
 import ForgotPassword from "@/screens/forgotPassword";
+import RunSharePreview from "@/screens/runSharePreview";
 
 type RootStackParamList = {
   MainTabs: undefined;
   AddLift: { folders: { name: string }[] };
-  AddWeightTest: undefined; // Adding Test Route
+  AddWeightTest: undefined;
+  RunSharePreview: { distance: string; pace: string; time: string };
 };
 
 const Tab = createBottomTabNavigator();
@@ -236,6 +238,11 @@ const TabNavigator: React.FC = () => {
       <Stack.Screen
         name="AddRun"
         component={AddRun} // Register AddRun here
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RunSharePreview"
+        component={RunSharePreview}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

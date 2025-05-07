@@ -236,7 +236,6 @@ export default function RunFolderData({ route }) {
                       <>
                         <TouchableOpacity
                           onPress={async () => {
-                            // Regex validators
                             const paceRegex = /^\d{1,2}:\d{2}$/;
                             const durationRegex = /^\d{1,2}:\d{2}:\d{2}$/;
 
@@ -281,6 +280,7 @@ export default function RunFolderData({ route }) {
                         >
                           <Text>✅</Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity
                           onPress={() =>
                             setCurrentlyEditing({ date: null, index: null })
@@ -290,18 +290,32 @@ export default function RunFolderData({ route }) {
                         </TouchableOpacity>
                       </>
                     ) : (
-                      <TouchableOpacity
-                        onPress={() => {
-                          setCurrentlyEditing({ date: group.date, index });
-                          setEditedDistance(run.distance.toString());
-                          setEditedPace(run.pace);
-                          setEditedDuration(run.duration);
-                          setEditedHeartRate(run.heartRate?.toString() || "");
-                          setEditedNotes(run.notes || "");
-                        }}
-                      >
-                        <Text>✏️</Text>
-                      </TouchableOpacity>
+                      <>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setCurrentlyEditing({ date: group.date, index });
+                            setEditedDistance(run.distance.toString());
+                            setEditedPace(run.pace);
+                            setEditedDuration(run.duration);
+                            setEditedHeartRate(run.heartRate?.toString() || "");
+                            setEditedNotes(run.notes || "");
+                          }}
+                        >
+                          <Text>✏️</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => {
+                            navigation.navigate("RunSharePreview", {
+                              distance: run.distance.toString(),
+                              pace: run.pace,
+                              time: run.duration,
+                            });
+                          }}
+                        >
+                          <Text>📤</Text>
+                        </TouchableOpacity>
+                      </>
                     )}
                   </View>
                 </View>
