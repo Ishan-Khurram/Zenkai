@@ -12,10 +12,13 @@ import { collection, getDocs } from "firebase/firestore";
 import { signOut, getAuth, sendPasswordResetEmail } from "firebase/auth";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
+import { deleteAccount } from "@/components/deleteAccount"; // update path as needed
+import { useNavigation } from "@react-navigation/native";
 
 export default function SettingScreen() {
   const router = useRoute();
   const auth = getAuth();
+  const navigation = useNavigation();
 
   const handleAccountPress = () => {
     // Navigate to Account Settings screen
@@ -52,14 +55,46 @@ export default function SettingScreen() {
     } catch (error) {}
   };
 
+  const handleDeletePress = () => {
+    Alert.prompt(
+      "Delete Account",
+      "Please enter your password to confirm account deletion.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: (password) => {
+            deleteAccount(
+              password,
+              () => {
+                Alert.alert(
+                  "Account Deleted",
+                  "Your account and data have been permanently removed."
+                );
+                navigation.navigate("Login"); // Or wherever your sign-in screen is
+              },
+              (errorMessage) => {
+                Alert.alert("Error", errorMessage);
+              }
+            );
+          },
+        },
+      ],
+      "secure-text"
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Settings</Text>
       </View>
       <View style={styles.bodyContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleAccountPress}>
-          <Text style={styles.buttonText}>Account</Text>
+        <TouchableOpacity style={styles.button} onPress={handleDeletePress}>
+          <Text style={styles.buttonText}>Delete Account</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.button} onPress={handlePasswordReset}>
